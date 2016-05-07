@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Divis Line Chart</title>
+  <link rel="stylesheet" href="../build/divis.css"/>
+</head>
+<body>
+
+  <div id="chart"></div>
+
+<script src="../node_modules/d3/d3.min.js"></script>
+<script src="../build/divis.js"></script>
+<script>
+  var data = generate(100, function(i){ return { x: i, y: Math.random() } });
+  var options = {
+    target: '#chart',
+    width: 500,
+    height: 400,
+    margin: { top: 20, right: 0, bottom: 40, left: 40 }
+  };
+  var chart = new Divis.LineChart(options, data)
+
+  chart.render()
+
+  function generate(n, f){
+    f = f || function(i){return i}
+    var arr = [];
+    for (var i = 1; i <= n; i++){
+      arr.push(f(i))
+    }
+    return arr;
+  }
+</script>
+</body>
+</html>
