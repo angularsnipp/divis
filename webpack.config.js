@@ -1,3 +1,5 @@
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 module.exports = {
   entry: './src',
   output: {
@@ -17,7 +19,23 @@ module.exports = {
           presets: ['es2015']
         },
         exclude: /node_modules/
+      },
+      {
+        test: /\.css|.scss$/,
+        loader: ExtractTextPlugin.extract(
+          'style-loader',
+          'css-loader?sourceMap&modules&localIdentName=[local]!postcss-loader'
+        ),
       }
     ]
-  }
+  },
+  postcss: function() {
+    return [
+      require('precss')(),
+      require('autoprefixer')(),
+    ];
+  },
+  plugins: [
+    new ExtractTextPlugin("build/divis.css", { allChunks: true })
+  ]
 };

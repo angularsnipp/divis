@@ -1,0 +1,86 @@
+.divis {
+
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;
+
+  position: relative;
+  width: 100%;
+
+  .reset {
+    position: absolute;
+    top: 3em;
+    right: 3em;
+  }
+
+  rect { fill: #fff; }
+
+  ul {
+    list-style-type: none;
+    margin: 0.5em 0em 0.5em 0em;
+    width: 100%; }
+
+  ul li {
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0em;
+    padding: 0em 1em;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: rgba(225, 225, 225, 1);
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+  }
+  .axis text {
+    pointer-events: none
+  }
+
+  .y.axis path {
+    display: none;
+  }
+  .y.axis line,
+  .x.axis line {
+    stroke-dasharray: 2,2;
+  }
+
+  .chart {
+    background-color: #F7F2C5;
+    width: 960px;
+    height: 500px;
+  }
+
+  .line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+  }
+
+  .dots {
+    circle {
+      stroke: steelblue;
+      stroke-width: 2px;
+      fill: steelblue;
+      fill-opacity: 0.4;
+      cursor: move;
+    }
+
+    circle.selected {
+      fill: #ff7f0e;
+      stroke: #ff7f0e;
+    }
+
+    circle:hover {
+      fill: #ff7f0e;
+      stroke: #707f0e;
+    }
+
+    circle.selected:hover {
+      fill: #ff7f0e;
+      stroke: #ff7f0e;
+    }
+  }
+}
