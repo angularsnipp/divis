@@ -3,8 +3,11 @@ module.exports = {
   output: {
     filename: 'build/divis.js',
     libraryTarget: 'umd',
-    library: 'divis'
+    library: 'Divis'
   },
+  externals: [{
+    d3: 'd3'
+  }],
   module: {
     loaders: [
       {
