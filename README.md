@@ -8,5 +8,14 @@ Available charts:
 - [x] Line / MultiLine chart
 - [x] Scatter chart
 
+## Examples
+
+Locally
+
+1. Clone repo
+2. $npm install
+3. $npm start
+4. go to url `http://localhost:8080/examples/`
+
 ## Licence
 MIT
