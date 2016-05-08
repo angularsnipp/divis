@@ -54,8 +54,9 @@ export class LineChart {
   }
 
   calculateLimits(){
-    let { options: _, data } = this
-    let { xAccessor, yAccessor } = _
+    let { options: _ } = this
+    const data = this.data[0]
+    const { xAccessor, yAccessor } = _
 
     _.xMax = d3.max(data, xAccessor)
     _.xMin = d3.min(data, xAccessor)
@@ -181,21 +182,33 @@ export class LineChart {
       .attr('height', h)
       .attr('pointer-events', 'all')
 
-    // Line Plot
-    this.linePlot = this.svg.append('path')
-      .attr('class', 'line')
-      .attr('clip-path', 'url(#clip)')
-      .attr('d', this.line(data))
-
-    // Dots
-    this.dots = this.svg.append('g')
-      .attr('class', 'dots')
-      .selectAll('circle')
+    // Lines Plot
+    this.lines = this.svg.selectAll('.line')
       .data(data)
 
-    this.dots.enter().append('circle')
+    this.lines.enter()
+      .append('path')
+      .attr('class', 'line')
       .attr('clip-path', 'url(#clip)')
-      .attr('class', d => d === self.selected ? 'selected' : null )
+      .attr('d', this.line)
+
+    this.lines.exit().remove()
+
+    // Dots
+    this.dots = this.svg.selectAll('.dots')
+      .data(data)
+
+    this.dots.enter()
+      .append('g')
+      .attr('class', 'dots')
+      .attr('clip-path', 'url(#clip)')
+
+    this.dots.selectAll('.dot')
+      .data(d => d)
+      .enter()
+      .append('circle')
+      .attr('class', 'dot')
+      .classed('selected', d => d === self.selected )
       .attr('cx', d => self.x(xAccessor(d)))
       .attr('cy', d => self.y(yAccessor(d)))
       .attr('r', 5.0)
@@ -229,12 +242,12 @@ export class LineChart {
   }
 
   update() {
-    const { data, line, linePlot, dots, x, y, selected } = this
+    const { line, lines, dots, x, y, selected } = this
 
-    linePlot.attr('d', line(data))
+    lines.attr('d', line)
 
-    dots.data(data)
-      .attr('class', d => d === selected ? 'selected' : null)
+    dots.selectAll('.dot')
+      .classed('selected', d => d === selected )
       .attr('cx', d => x(d.x))
       .attr('cy', d => y(d.y))
 
