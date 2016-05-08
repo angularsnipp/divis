@@ -36,7 +36,7 @@
 
   // MULTI LINE CHART
   var multiLineChartData = generate(5, function(s){
-    return generate(100, function(i){ return { x: i, y: Math.random() } })
+    return generate(100, function(i){ return { x: i, y: Math.random() + 2*s } })
   });
   var multiLineChartOptions = {
     target: '#multiLineChart',

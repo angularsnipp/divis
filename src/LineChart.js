@@ -55,14 +55,20 @@ export class LineChart {
   }
 
   calculateLimits(){
-    let { options: _ } = this
-    const data = this.data[0]
+    let { options: _} = this
     const { xAccessor, yAccessor } = _
 
-    _.xMax = d3.max(data, xAccessor)
-    _.xMin = d3.min(data, xAccessor)
-    _.yMax = d3.max(data, yAccessor)
-    _.yMin = d3.min(data, yAccessor)
+    _.xMax = -Infinity
+    _.xMin = Infinity
+    _.yMax = -Infinity
+    _.yMin = Infinity
+
+    this.data.forEach(d => {
+      _.xMax = d3.max([_.xMax, d3.max(d, xAccessor)])
+      _.xMin = d3.min([_.xMin, d3.min(d, xAccessor)])
+      _.yMax = d3.max([_.yMax, d3.max(d, yAccessor)])
+      _.yMin = d3.min([_.yMin, d3.min(d, yAccessor)])
+    })
   }
 
   init(){
