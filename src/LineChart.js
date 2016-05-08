@@ -18,6 +18,7 @@ const defaults = {
   margin: {top: 20, right: 0, bottom: 40, left: 40},
   xAccessor: d => d.x,
   yAccessor: d => d.y,
+  colors: d3.scale.category20().range().slice(10),
   get w() {
     const { width, margin } = this
     return width - margin.left - margin.right
@@ -83,7 +84,8 @@ export class LineChart {
       yMax,
       yMin,
       xAccessor, 
-      yAccessor
+      yAccessor,
+      colors
       } = options
 
     // x-scale
@@ -191,6 +193,7 @@ export class LineChart {
       .attr('class', 'line')
       .attr('clip-path', 'url(#clip)')
       .attr('d', this.line)
+      .style('stroke', (d, i) => colors[i % colors.length])
 
     this.lines.exit().remove()
 
@@ -212,6 +215,8 @@ export class LineChart {
       .attr('cx', d => self.x(xAccessor(d)))
       .attr('cy', d => self.y(yAccessor(d)))
       .attr('r', 5.0)
+      .style('stroke', (d, i, s) => colors[s])
+      .style('fill', (d, i, s) => colors[s])
       .style('cursor', 'ns-resize')
       .on('click',  this.pointClick)
       .on('mousedown.drag',  this.pointDrag())
