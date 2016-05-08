@@ -6,22 +6,48 @@
 </head>
 <body>
 
-  <div id="chart"></div>
+<div>
+  <h3>Multi Line Chart</h3>
+  <div id="multiLineChart"></div>
+</div>
+
+<div>
+  <h3>Line Chart</h3>
+  <div id="lineChart"></div>
+</div>
+
+
 
 <script src="../node_modules/d3/d3.min.js"></script>
 <script src="../build/divis.js"></script>
 <script>
-  var data = generate(100, function(i){ return { x: i, y: Math.random() } });
-  var options = {
-    target: '#chart',
+
+  // LINE CHART
+  var lineChartData = [generate(100, function(i){ return { x: i, y: Math.random() } })];
+  var lineChartOptions = {
+    target: '#lineChart',
     width: 500,
     height: 400,
     margin: { top: 20, right: 0, bottom: 40, left: 40 }
   };
-  var chart = new Divis.LineChart(options, data)
+  var lineChart = new Divis.LineChart(lineChartOptions, lineChartData);
+  lineChart.render()
 
-  chart.render()
 
+  // MULTI LINE CHART
+  var multiLineChartData = generate(5, function(i){
+    return generate(100, function(i){ return { x: i, y: Math.random() } })
+  });
+  var multiLineChartOptions = {
+    target: '#multiLineChart',
+    width: 500,
+    height: 400,
+    margin: { top: 20, right: 0, bottom: 40, left: 40 }
+  };
+  var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
+  multiLineChart.render()
+
+  // DATA GENERATOR
   function generate(n, f){
     f = f || function(i){return i}
     var arr = [];
