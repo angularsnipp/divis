@@ -230,6 +230,13 @@ export class LineChart {
 
     this.dots.exit().remove()
 
+    // Reset button
+    d3.select(target).append('button')
+      .attr('class', 'reset')
+      .text('Reset')
+      .on('click', this.reset.bind(this))
+
+    // Events
     d3.select(target)
       .on('click', this.chartClick.bind(this))
 
@@ -268,6 +275,11 @@ export class LineChart {
     }
   }
 
+  chartClick() {
+    this.selected = this.dragged = null
+    this.update()
+  }
+
   pointDrag() {
     const self = this
     return function(d, i) {
@@ -280,11 +292,6 @@ export class LineChart {
       self.pointIndex = i
       self.update()
     }
-  }
-
-  chartClick() {
-    this.selected = this.dragged = null
-    this.update()
   }
 
   pointClick(){
@@ -380,4 +387,22 @@ export class LineChart {
     self.yDrag = self.y.invert(p[1])
   }
 
+  reset(){
+    const self = this
+
+    // recalculate limits
+    self.calculateLimits()
+
+    d3.transition().duration(750)
+      .tween("zoom", _ => {
+        const ix = d3.interpolate(self.x.domain(), [self.options.xMin, self.options.xMax])
+        const iy = d3.interpolate(self.y.domain(), [self.options.yMin, self.options.yMax])
+
+        return t => {
+          self.x.domain(ix(t))
+          self.y.domain(iy(t))
+          self.redraw()
+        }
+      })
+  }
 }
