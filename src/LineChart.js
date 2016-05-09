@@ -155,6 +155,8 @@ export class LineChart {
       .attr('class', 'divis')
       .attr('width',  width)
       .attr('height', height)
+      .style('width',  width + 'px')
+      .style('height', height + 'px')
 
     this.g = this.svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
