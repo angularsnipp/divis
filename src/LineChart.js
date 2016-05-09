@@ -13,20 +13,12 @@ export const EVENTS = {
  * Default config
  */
 const defaults = {
-  width: 500,
+  width: 400,
   height: 350,
-  margin: {top: 20, right: 0, bottom: 40, left: 40},
+  margin: {top: 20, right: 20, bottom: 40, left: 40},
   xAccessor: d => d.x,
   yAccessor: d => d.y,
-  colors: d3.scale.category20().range().slice(10),
-  get w() {
-    const { width, margin } = this
-    return width - margin.left - margin.right
-  },
-  get h() {
-    const { height, margin } = this
-    return height - margin.top - margin.bottom
-  }
+  colors: d3.scale.category20().range().slice(10)
 }
 
 /**
@@ -45,7 +37,27 @@ export class LineChart {
   }
 
   setOptions(_){
+    // Set width and height
+    const elem = d3.select(_.target).node()
+
+    // set width
+    if (!_.width) {
+      _.width = elem.clientWidth
+    }
+
+    // set height
+    if (!_.height) {
+      _.height = elem.clientHeight
+    }
+
+    // merge options
     Object.assign(this.options, defaults, _)
+
+    // calculate width and height without margins
+    const { width, height, margin } = this.options
+    this.options.w = width - margin.left - margin.right
+    this.options.h = height - margin.top - margin.bottom
+
     return this
   }
 
@@ -143,11 +155,12 @@ export class LineChart {
       .attr('class', 'divis')
       .attr('width',  width)
       .attr('height', height)
-      .append('g')
+
+    this.g = this.svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-    // svg zoom layer
-    this.svg.append('rect')
+    // g zoom layer
+    this.g.append('rect')
       .attr('class', 'zoom-layer')
       .attr('width', w)
       .attr('height', h)
@@ -155,7 +168,7 @@ export class LineChart {
 
     // X Axis
     // x axis layer
-    this.svg.append('rect')
+    this.g.append('rect')
       .attr('class', 'zoom-layer')
       .attr('transform', `translate(0, ${h})`)
       .attr('width', w)
@@ -164,13 +177,13 @@ export class LineChart {
       .on('touchstart.drag', this.xAxisDrag.bind(this))
       .on('mouseout',  this.mouseup.bind(this))
 
-    this.xAxisG = this.svg.append('g')
+    this.xAxisG = this.g.append('g')
       .attr('class', 'x axis')
       .attr('transform', `translate(0, ${h})`)
 
     // Y Axis
     // y axis layer
-    this.svg.append('rect')
+    this.g.append('rect')
       .attr('class', 'zoom-layer ')
       .attr('transform', `translate(-30,0)`)
       .attr('height', h)
@@ -179,11 +192,11 @@ export class LineChart {
       .on('touchstart.drag', this.yAxisDrag.bind(this))
       .on('mouseout',  this.mouseup.bind(this))
 
-    this.yAxisG = this.svg.append('g')
+    this.yAxisG = this.g.append('g')
       .attr('class', 'y axis')
 
     // Clip Path
-    this.svg.append('clipPath')
+    this.g.append('clipPath')
       .attr('id', 'clip')
       .append('rect')
       .attr('width', w)
@@ -191,7 +204,7 @@ export class LineChart {
       .attr('pointer-events', 'all')
 
     // Lines Plot
-    this.lines = this.svg.selectAll('.line')
+    this.lines = this.g.selectAll('.line')
       .data(data)
 
     this.lines.enter()
@@ -204,7 +217,7 @@ export class LineChart {
     this.lines.exit().remove()
 
     // Dots
-    this.dots = this.svg.selectAll('.dots')
+    this.dots = this.g.selectAll('.dots')
       .data(data)
 
     this.dots.enter()
@@ -231,8 +244,11 @@ export class LineChart {
     this.dots.exit().remove()
 
     // Reset button
+    d3.select(target)
+      .style('position', 'relative')
+
     d3.select(target).append('button')
-      .attr('class', 'reset')
+      .attr('class', 'divis reset')
       .text('Reset')
       .on('click', this.reset.bind(this))
 
@@ -240,7 +256,7 @@ export class LineChart {
     d3.select(target)
       .on('click', this.chartClick.bind(this))
 
-    this.svg
+    this.g
       .on('mousemove.drag', this.mousemove.bind(this))
       .on('touchmove.drag', this.mousemove.bind(this))
       .on('mouseup.drag',   this.mouseup.bind(this))
@@ -300,7 +316,7 @@ export class LineChart {
   }
 
   mousemove() {
-    const self = this, p = d3.mouse(self.svg[0][0])
+    const self = this, p = d3.mouse(self.g[0][0])
 
     if (self.dragged) {
       self.dragged.y = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
@@ -308,7 +324,7 @@ export class LineChart {
       self.update()
     }
     if (!isNaN(self.xDrag)) {
-      self.svg.style("cursor", "ew-resize")
+      self.g.style("cursor", "ew-resize")
 
       const x = self.x.invert(p[0]),
         x0 = self.x.domain()[0],
@@ -326,7 +342,7 @@ export class LineChart {
       d3.event.stopPropagation()
     }
     if (!isNaN(self.yDrag)) {
-      self.svg.style("cursor", "ns-resize")
+      self.g.style("cursor", "ns-resize")
 
       const y = self.y.invert(p[1]),
         y0 = self.y.domain()[0],
@@ -348,7 +364,7 @@ export class LineChart {
   mouseup() {
     const self = this
 
-    self.svg.style("cursor", "auto")
+    self.g.style("cursor", "auto")
 
     if (!isNaN(self.xDrag)) {
       self.redraw()
@@ -377,13 +393,13 @@ export class LineChart {
 
   xAxisDrag() {
     const self = this
-    const p = d3.mouse(self.svg[0][0])
+    const p = d3.mouse(self.g[0][0])
     self.xDrag = self.x.invert(p[0])
   }
 
   yAxisDrag() {
     const self = this
-    const p = d3.mouse(self.svg[0][0])
+    const p = d3.mouse(self.g[0][0])
     self.yDrag = self.y.invert(p[1])
   }
 

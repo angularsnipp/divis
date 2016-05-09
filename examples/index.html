@@ -26,9 +26,8 @@
   var lineChartData = [generate(100, function(i){ return { x: i, y: Math.random() } })];
   var lineChartOptions = {
     target: '#lineChart',
-    width: 500,
     height: 400,
-    margin: { top: 20, right: 0, bottom: 40, left: 40 }
+    margin: { top: 20, right: 20, bottom: 40, left: 40 }
   };
   var lineChart = new Divis.LineChart(lineChartOptions, lineChartData);
   lineChart.render()
@@ -40,9 +39,8 @@
   });
   var multiLineChartOptions = {
     target: '#multiLineChart',
-    width: 500,
     height: 400,
-    margin: { top: 20, right: 0, bottom: 40, left: 40 }
+    margin: { top: 20, right: 20, bottom: 40, left: 40 }
   };
   var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
   multiLineChart.render()
