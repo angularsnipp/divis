@@ -1,13 +1,5 @@
 import d3 from 'd3'
-
-/**
- * Chart events
- */
-export const EVENTS = {
-  POINT: {
-    DRAG: 'POINT_DRAG'
-  }
-}
+import { EVENTS } from './Events'
 
 /**
  * Default config
