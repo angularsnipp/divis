@@ -293,6 +293,7 @@ export class ScatterChart {
     const self = this, p = d3.mouse(self.g[0][0])
 
     if (self.dragged) {
+      self.dragged.x = self.x.invert(Math.max(0, Math.min(self.options.w, p[0])))
       self.dragged.y = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
       self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.update()
