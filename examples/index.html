@@ -19,6 +19,7 @@
     .log { background-color: darkslategray; height: 400px; border-radius: 4px; color: white; padding: 1em; margin: 1.5em 1.5em; overflow-y: auto; }
     .log-event { color: yellow; }
     .log-data, .log-index { margin-left: 1em; color: #FAEBD7; }
+    pre { margin: 0 1em; }
   </style>
 </head>
 <body>
@@ -87,7 +88,7 @@
   scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: '+ JSON.stringify(d) +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('scatterChartLog', text);
   });
@@ -106,7 +107,7 @@
   lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: '+ JSON.stringify(d) +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('lineChartLog', text);
   });
@@ -128,7 +129,7 @@
   multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: '+ JSON.stringify(d) +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('multiLineChartLog', text);
   });
