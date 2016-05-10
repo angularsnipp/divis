@@ -228,6 +228,15 @@ export class ScatterChart {
 
     this.dots.exit().remove()
 
+    // Reset button
+    d3.select(target)
+      .style('position', 'relative')
+
+    d3.select(target).append('button')
+      .attr('class', 'divis reset')
+      .text('Reset')
+      .on('click', this.reset.bind(this))
+
     // Events
     d3.select(target)
       .on('click', this.chartClick.bind(this))
@@ -378,4 +387,22 @@ export class ScatterChart {
     self.yDrag = self.y.invert(p[1])
   }
 
+  reset(){
+    const self = this
+
+    // recalculate limits
+    self.calculateLimits()
+
+    d3.transition().duration(750)
+      .tween("zoom", _ => {
+        const ix = d3.interpolate(self.x.domain(), [self.options.xMin, self.options.xMax])
+        const iy = d3.interpolate(self.y.domain(), [self.options.yMin, self.options.yMax])
+
+        return t => {
+          self.x.domain(ix(t))
+          self.y.domain(iy(t))
+          self.redraw()
+        }
+      })
+  }
 }
