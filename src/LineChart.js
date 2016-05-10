@@ -322,7 +322,7 @@ export class LineChart {
 
     if (self.dragged) {
       self.dragged.y = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
-      self.dispatch[EVENTS.POINT.DRAG](self.pointIndex, self.dragged)
+      self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.update()
     }
     if (!isNaN(self.xDrag)) {
@@ -381,7 +381,7 @@ export class LineChart {
       d3.event.stopPropagation()
     }
     if (self.dragged) {
-      self.dispatch[EVENTS.POINT.DRAG](self.pointIndex, self.dragged)
+      self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.dragged = null
     }
   }

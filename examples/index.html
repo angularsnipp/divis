@@ -68,11 +68,11 @@
   var lineChart = new Divis.LineChart(lineChartOptions, lineChartData);
   lineChart.render();
 
-  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(a,b){
+  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: '+ JSON.stringify(b) +'</div>' +
-        '<div class="log-index">i: '+ a +'</div>';
+        '<div class="log-data">data: '+ JSON.stringify(d) +'</div>' +
+        '<div class="log-index">i: '+ i +'</div>';
     logEvent('lineChartLog', text);
   });
 
@@ -90,11 +90,11 @@
   var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
   multiLineChart.render();
 
-  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(a,b){
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: '+ JSON.stringify(b) +'</div>' +
-        '<div class="log-index">i: '+ a +'</div>';
+        '<div class="log-data">data: '+ JSON.stringify(d) +'</div>' +
+        '<div class="log-index">i: '+ i +'</div>';
     logEvent('multiLineChartLog', text);
   });
 
