@@ -80,6 +80,64 @@
     logEvent('lineChartLog', text);
   });
 
+
+  // MULTI LINE CHART
+  var multiLineChartData = generate(100, function(i){
+    return {
+      x: i,
+      y1: Math.random() + 1,
+      y2: Math.random() + 2,
+      y3: Math.random() + 3,
+      y4: Math.random() + 4,
+      y5: Math.random() + 5
+    }
+  });
+  var multiLineChartOptions = {
+    target: '#multiLineChart',
+    height: 400,
+    margin: { top: 20, right: 30, bottom: 40, left: 40 },
+    xVariable: 'x',
+    yVariables: ['y1', 'y2', 'y3', 'y4', 'y5'],
+    variables: {
+      x: { name: 'X', accessor: function(d){ return d.x } },
+      y1: { name: 'Y1', accessor: function(d){ return d.y1 } },
+      y2: { name: 'Y2', accessor: function(d){ return d.y2 } },
+      y3: { name: 'Y3', accessor: function(d){ return d.y3 } },
+      y4: { name: 'Y4', accessor: function(d){ return d.y4 } },
+      y5: { name: 'Y5', accessor: function(d){ return d.y5 } }
+    }
+  };
+
+  var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
+  multiLineChart.render();
+
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('multiLineChartLog', text);
+  });
+
+  // SCATTER CHART
+  var scatterChartData = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: parseInt(3*Math.random()) } });
+  var scatterChartOptions = {
+    target: '#scatterChart',
+    height: 400,
+    margin: { top: 20, right: 30, bottom: 40, left: 40 }
+  };
+
+  var scatterChart = new Divis.ScatterChart(scatterChartOptions, scatterChartData);
+  scatterChart.render();
+
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('scatterChartLog', text);
+  });
+
 </script>
 
 </body>

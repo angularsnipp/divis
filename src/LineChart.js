@@ -123,7 +123,6 @@ export class LineChart {
 
     this.line = d3.svg.line()
       .x(d => self.x(variables[xVariable].accessor(d)))
-      //.y(d => self.y(yAccessor(d)))
 
     this.zoom = d3.behavior.zoom()
       .x(this.x)
