@@ -62,7 +62,7 @@
 <script>
 
   // LINE CHART
-  var lineChartData = [generate(100, function(i){ return { x: i, y: Math.random() } })];
+  var lineChartData = generate(100, function(i){ return { x: i, y: Math.random() } });
   var lineChartOptions = {
     target: '#lineChart',
     height: 400,
@@ -78,47 +78,6 @@
         '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('lineChartLog', text);
-  });
-
-
-  // MULTI LINE CHART
-  var multiLineChartData = generate(5, function(s){
-    return generate(100, function(i){ return { x: i, y: Math.random() + 2*s } })
-  });
-  var multiLineChartOptions = {
-    target: '#multiLineChart',
-    height: 400,
-    margin: { top: 20, right: 30, bottom: 40, left: 40 }
-  };
-
-  var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
-  multiLineChart.render();
-
-  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('multiLineChartLog', text);
-  });
-
-  // SCATTER CHART
-  var scatterChartData = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: parseInt(3*Math.random()) } });
-  var scatterChartOptions = {
-    target: '#scatterChart',
-    height: 400,
-    margin: { top: 20, right: 30, bottom: 40, left: 40 }
-  };
-
-  var scatterChart = new Divis.ScatterChart(scatterChartOptions, scatterChartData);
-  scatterChart.render();
-
-  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('scatterChartLog', text);
   });
 
 </script>

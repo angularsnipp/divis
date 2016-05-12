@@ -8,6 +8,12 @@ const defaults = {
   width: 400,
   height: 350,
   margin: {top: 20, right: 20, bottom: 40, left: 40},
+  xVariable: 0,
+  yVariables: [1],
+  variables: {
+    0: { name: 'X', accessor: d => d.x },
+    1: { name: 'Y', accessor: d => d.y }
+  },
   xAccessor: d => d.x,
   yAccessor: d => d.y,
   colors: d3.scale.category20().range().slice(10)
@@ -59,20 +65,27 @@ export class LineChart {
   }
 
   calculateLimits(){
-    let { options: _} = this
-    const { xAccessor, yAccessor } = _
+    //let { options: _} = this
+    //const { xAccessor, yAccessor } = _
+    //
+    //_.xMax = -Infinity
+    //_.xMin = Infinity
+    //_.yMax = -Infinity
+    //_.yMin = Infinity
+    //
+    //this.data.forEach(d => {
+    //  _.xMax = d3.max([_.xMax, d3.max(d, xAccessor)])
+    //  _.xMin = d3.min([_.xMin, d3.min(d, xAccessor)])
+    //  _.yMax = d3.max([_.yMax, d3.max(d, yAccessor)])
+    //  _.yMin = d3.min([_.yMin, d3.min(d, yAccessor)])
+    //})
+    let { options: _, data} = this
+    const { variables, xVariable, yVariables } = _
 
-    _.xMax = -Infinity
-    _.xMin = Infinity
-    _.yMax = -Infinity
-    _.yMin = Infinity
-
-    this.data.forEach(d => {
-      _.xMax = d3.max([_.xMax, d3.max(d, xAccessor)])
-      _.xMin = d3.min([_.xMin, d3.min(d, xAccessor)])
-      _.yMax = d3.max([_.yMax, d3.max(d, yAccessor)])
-      _.yMin = d3.min([_.yMin, d3.min(d, yAccessor)])
-    })
+    _.xMax = d3.max(data, variables[xVariable].accessor)
+    _.xMin = d3.min(data, variables[xVariable].accessor)
+    _.yMax = d3.max(data, d => d3.max(yVariables, v => variables[v].accessor(d)))
+    _.yMin = d3.min(data, d => d3.min(yVariables, v => variables[v].accessor(d)))
   }
 
   init(){
@@ -95,6 +108,9 @@ export class LineChart {
       yMin,
       xAccessor, 
       yAccessor,
+      variables,
+      xVariable,
+      yVariables,
       colors
       } = options
 
@@ -124,8 +140,8 @@ export class LineChart {
       .tickPadding(10)
 
     this.line = d3.svg.line()
-      .x(d => self.x(xAccessor(d)))
-      .y(d => self.y(yAccessor(d)))
+      .x(d => self.x(variables[xVariable].accessor(d)))
+      //.y(d => self.y(yAccessor(d)))
 
     this.zoom = d3.behavior.zoom()
       .x(this.x)
@@ -199,20 +215,22 @@ export class LineChart {
 
     // Lines Plot
     this.lines = this.g.selectAll('.line')
-      .data(data)
+      .data(yVariables)
 
     this.lines.enter()
       .append('path')
       .attr('class', 'line')
       .attr('clip-path', 'url(#clip)')
-      .attr('d', this.line)
-      .style('stroke', (d, i) => colors[i % colors.length])
+      .attr('d', v => {
+        return self.line.y(d => self.y(variables[v].accessor(d)))(data)
+      })
+      .style('stroke', (v, i) => colors[i % colors.length])
 
     this.lines.exit().remove()
 
     // Dots
     this.dots = this.g.selectAll('.dots')
-      .data(data)
+      .data(yVariables)
 
     this.dots.enter()
       .append('g')
@@ -220,13 +238,13 @@ export class LineChart {
       .attr('clip-path', 'url(#clip)')
 
     this.dots.selectAll('.dot')
-      .data(d => d)
+      .data(d => data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
       .classed('selected', d => d === self.selected )
-      .attr('cx', d => self.x(xAccessor(d)))
-      .attr('cy', d => self.y(yAccessor(d)))
+      .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d)))
+      .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d)))
       .attr('r', 5.0)
       .style('stroke', (d, i, s) => colors[s])
       .style('fill', (d, i, s) => colors[s])
@@ -270,15 +288,17 @@ export class LineChart {
   }
 
   update() {
-    const { line, lines, dots, x, y, selected } = this
-    const { xAccessor, yAccessor } = this.options
+    const { data, line, lines, dots, x, y, selected } = this
+    const { xAccessor, yAccessor, variables, xVariable, yVariables } = this.options
 
-    lines.attr('d', line)
+    lines.attr('d', v => {
+      return line.y(d => y(variables[v].accessor(d)))(data)
+    })
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
-      .attr('cx', d => x(xAccessor(d)))
-      .attr('cy', d => y(yAccessor(d)))
+      .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d)))
+      .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d)))
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
