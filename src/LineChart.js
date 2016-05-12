@@ -8,11 +8,11 @@ const defaults = {
   width: 400,
   height: 350,
   margin: {top: 20, right: 20, bottom: 40, left: 40},
-  xVariable: 0,
-  yVariables: [1],
+  xVariable: 'x',
+  yVariables: ['y'],
   variables: {
-    0: { name: 'X', accessor: d => d.x },
-    1: { name: 'Y', accessor: d => d.y }
+    x: { name: 'X', accessor: d => d.x },
+    y: { name: 'Y', accessor: d => d.y }
   },
   colors: d3.scale.category20().range().slice(10)
 }
