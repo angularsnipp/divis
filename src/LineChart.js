@@ -231,7 +231,7 @@ export class LineChart {
       .style('fill', (d, i, s) => colors[s])
       .style('cursor', 'ns-resize')
       .on('click',  this.pointClick)
-      .on('mousedown.drag',  this.pointDrag())
+      .on('mousedown.drag', this.pointDrag())
       .on('touchstart.drag', this.pointDrag())
 
     this.dots.exit().remove()
@@ -294,7 +294,7 @@ export class LineChart {
 
   pointDrag() {
     const self = this
-    return function(d, i) {
+    return function(d, i, s) {
       if (d3.event) {
         d3.event.preventDefault()
         d3.event.stopPropagation()
@@ -302,6 +302,7 @@ export class LineChart {
 
       self.selected = self.dragged = d
       self.pointIndex = i
+      self.seriesIndex = s
       self.update()
     }
   }
@@ -312,11 +313,13 @@ export class LineChart {
   }
 
   mousemove() {
+    const { yVariables } = this.options
     const self = this, p = d3.mouse(self.g[0][0])
 
     if (self.dragged) {
-      self.dragged.y = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
-      self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
+      //TODO: need the right way (via accessors) to save values to dragged
+      self.dragged[yVariables[self.seriesIndex]] = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
+      self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex, self.seriesIndex)
       self.update()
     }
     if (!isNaN(self.xDrag)) {
@@ -375,7 +378,7 @@ export class LineChart {
       d3.event.stopPropagation()
     }
     if (self.dragged) {
-      self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
+      self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex, self.seriesIndex)
       self.dragged = null
     }
   }
