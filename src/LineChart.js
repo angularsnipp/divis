@@ -271,13 +271,14 @@ export class LineChart {
 
   update() {
     const { line, lines, dots, x, y, selected } = this
+    const { xAccessor, yAccessor } = this.options
 
     lines.attr('d', line)
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
-      .attr('cx', d => x(d.x))
-      .attr('cy', d => y(d.y))
+      .attr('cx', d => x(xAccessor(d)))
+      .attr('cy', d => y(yAccessor(d)))
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
