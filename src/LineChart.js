@@ -14,8 +14,6 @@ const defaults = {
     0: { name: 'X', accessor: d => d.x },
     1: { name: 'Y', accessor: d => d.y }
   },
-  xAccessor: d => d.x,
-  yAccessor: d => d.y,
   colors: d3.scale.category20().range().slice(10)
 }
 
@@ -65,20 +63,6 @@ export class LineChart {
   }
 
   calculateLimits(){
-    //let { options: _} = this
-    //const { xAccessor, yAccessor } = _
-    //
-    //_.xMax = -Infinity
-    //_.xMin = Infinity
-    //_.yMax = -Infinity
-    //_.yMin = Infinity
-    //
-    //this.data.forEach(d => {
-    //  _.xMax = d3.max([_.xMax, d3.max(d, xAccessor)])
-    //  _.xMin = d3.min([_.xMin, d3.min(d, xAccessor)])
-    //  _.yMax = d3.max([_.yMax, d3.max(d, yAccessor)])
-    //  _.yMin = d3.min([_.yMin, d3.min(d, yAccessor)])
-    //})
     let { options: _, data} = this
     const { variables, xVariable, yVariables } = _
 
@@ -106,8 +90,6 @@ export class LineChart {
       xMin,
       yMax,
       yMin,
-      xAccessor, 
-      yAccessor,
       variables,
       xVariable,
       yVariables,
@@ -289,7 +271,7 @@ export class LineChart {
 
   update() {
     const { data, line, lines, dots, x, y, selected } = this
-    const { xAccessor, yAccessor, variables, xVariable, yVariables } = this.options
+    const { variables, xVariable, yVariables } = this.options
 
     lines.attr('d', v => {
       return line.y(d => y(variables[v].accessor(d)))(data)
