@@ -3,41 +3,12 @@
 <head>
   <title>Divis Line Chart</title>
   <link rel="stylesheet" href="../build/divis.css"/>
-  <style>
-    body { margin: 1em; }
-
-    .grid {
-      display: flex;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      border: 1px solid darkslategray;
-    }
-    .grid-cell { flex: 1; padding: 0 0 0 1em; }
-    .grid-cell.c30 { flex: 0 0 33.3333%; }
-
-    .log { background-color: darkslategray; height: 400px; border-radius: 4px; color: white; padding: 1em; margin: 1.5em 1.5em; overflow-y: auto; }
-    .log-event { color: yellow; }
-    .log-data, .log-index { margin-left: 1em; color: #FAEBD7; }
-    pre { margin: 0 1em; }
-  </style>
+  <link rel="stylesheet" href="./styles.css"/>
 </head>
 <body>
 
-
-<div class="grid">
-
-  <div class="grid-cell">
-    <h3>Scatter Chart</h3>
-    <div id="scatterChart"></div>
-  </div>
-
-  <div class="grid-cell c30">
-    <div id="scatterChartLog" class="log">
-      <div style="font-style: italic; text-decoration: underline;">LOG</div>
-    </div>
-  </div>
-
+<div class="examples">
+  <a href="chartCommunication.html">Chart Communication</a>
 </div>
 
 <div class="grid">
@@ -70,28 +41,25 @@
 
 </div>
 
+<div class="grid">
+
+  <div class="grid-cell">
+    <h3>Scatter Chart</h3>
+    <div id="scatterChart"></div>
+  </div>
+
+  <div class="grid-cell c30">
+    <div id="scatterChartLog" class="log">
+      <div style="font-style: italic; text-decoration: underline;">LOG</div>
+    </div>
+  </div>
+
+</div>
+
 <script src="../node_modules/d3/d3.min.js"></script>
 <script src="../build/divis.js"></script>
+<script src="./script.js"></script>
 <script>
-
-  // SCATTER CHART
-  var scatterChartData = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: parseInt(3*Math.random()) } });
-  var scatterChartOptions = {
-    target: '#scatterChart',
-    height: 400,
-    margin: { top: 20, right: 30, bottom: 40, left: 40 }
-  };
-
-  var scatterChart = new Divis.ScatterChart(scatterChartOptions, scatterChartData);
-  scatterChart.render();
-
-  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('scatterChartLog', text);
-  });
 
   // LINE CHART
   var lineChartData = [generate(100, function(i){ return { x: i, y: Math.random() } })];
@@ -134,24 +102,26 @@
     logEvent('multiLineChartLog', text);
   });
 
+  // SCATTER CHART
+  var scatterChartData = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: parseInt(3*Math.random()) } });
+  var scatterChartOptions = {
+    target: '#scatterChart',
+    height: 400,
+    margin: { top: 20, right: 30, bottom: 40, left: 40 }
+  };
 
-  // DATA GENERATOR
-  function generate(n, f){
-    f = f || function(i){return i}
-    var arr = [];
-    for (var i = 1; i <= n; i++){
-      arr.push(f(i))
-    }
-    return arr;
-  }
+  var scatterChart = new Divis.ScatterChart(scatterChartOptions, scatterChartData);
+  scatterChart.render();
 
-  function logEvent(element, text){
-    var log = document.getElementById(element);
-    var div = document.createElement('div');
-    div.innerHTML = text;
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
-  }
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('scatterChartLog', text);
+  });
+
 </script>
+
 </body>
 </html>
