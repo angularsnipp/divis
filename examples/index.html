@@ -75,7 +75,7 @@
 <script>
 
   // SCATTER CHART
-  var scatterChartData = [generate(100, function(i){ return { x: Math.random(), y: Math.random() } })];
+  var scatterChartData = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: parseInt(3*Math.random()) } });
   var scatterChartOptions = {
     target: '#scatterChart',
     height: 400,

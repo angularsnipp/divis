@@ -10,6 +10,7 @@ const defaults = {
   margin: {top: 20, right: 20, bottom: 40, left: 40},
   xAccessor: d => d.x,
   yAccessor: d => d.y,
+  groupAccessor: d => d.group,
   colors: d3.scale.category20().range().slice(10)
 }
 
@@ -59,20 +60,13 @@ export class ScatterChart {
   }
 
   calculateLimits(){
-    let { options: _} = this
+    let { options: _, data} = this
     const { xAccessor, yAccessor } = _
 
-    _.xMax = -Infinity
-    _.xMin = Infinity
-    _.yMax = -Infinity
-    _.yMin = Infinity
-
-    this.data.forEach(d => {
-      _.xMax = d3.max([_.xMax, d3.max(d, xAccessor)])
-      _.xMin = d3.min([_.xMin, d3.min(d, xAccessor)])
-      _.yMax = d3.max([_.yMax, d3.max(d, yAccessor)])
-      _.yMin = d3.min([_.yMin, d3.min(d, yAccessor)])
-    })
+    _.xMax = d3.max(data, xAccessor)
+    _.xMin = d3.min(data, xAccessor)
+    _.yMax = d3.max(data, yAccessor)
+    _.yMin = d3.min(data, yAccessor)
   }
 
   init(){
@@ -95,6 +89,7 @@ export class ScatterChart {
       yMin,
       xAccessor,
       yAccessor,
+      groupAccessor,
       colors
       } = options
 
@@ -194,16 +189,12 @@ export class ScatterChart {
       .attr('pointer-events', 'all')
 
     // Dots
-    this.dots = this.g.selectAll('.dots')
-      .data(data)
-
-    this.dots.enter()
-      .append('g')
+    this.dots = this.g.append('g')
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
 
     this.dots.selectAll('.dot')
-      .data(d => d)
+      .data(data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
@@ -211,14 +202,12 @@ export class ScatterChart {
       .attr('cx', d => self.x(xAccessor(d)))
       .attr('cy', d => self.y(yAccessor(d)))
       .attr('r', 5.0)
-      .style('stroke', (d, i, s) => colors[s])
-      .style('fill', (d, i, s) => colors[s])
-      .style('cursor', 'ns-resize')
+      .style('stroke', (d, i) => colors[groupAccessor(d, i)])
+      .style('fill', (d, i) => colors[groupAccessor(d, i)])
+      .style('cursor', 'move')
       .on('click',  this.pointClick)
       .on('mousedown.drag',  this.pointDrag())
       .on('touchstart.drag', this.pointDrag())
-
-    this.dots.exit().remove()
 
     // Reset button
     d3.select(target)
@@ -254,11 +243,12 @@ export class ScatterChart {
 
   update() {
     const { dots, x, y, selected } = this
+    const { xAccessor, yAccessor } = this.options
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
-      .attr('cx', d => x(d.x))
-      .attr('cy', d => y(d.y))
+      .attr('cx', d => x(xAccessor(d)))
+      .attr('cy', d => y(yAccessor(d)))
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
