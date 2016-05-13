@@ -61,7 +61,14 @@
   var lineChartOptions = {
     target: '#lineChart',
     height: 400,
-    margin: { top: 20, right: 30, bottom: 40, left: 40 }
+    margin: { top: 20, right: 30, bottom: 40, left: 40 },
+    xVariable: 'index',
+    yVariables: ['x', 'y'],
+    variables: {
+      index: { name: 'Index', accessor: function(d, i){ return i; } },
+      x: { name: 'X', accessor: function(d){ return d.x; } },
+      y: { name: 'Y', accessor: function(d){ return d.y; } }
+    }
   };
 
   var lineChart = new Divis.LineChart(lineChartOptions, data);
