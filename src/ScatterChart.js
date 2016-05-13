@@ -26,7 +26,7 @@ export class ScatterChart {
 
   constructor(options = {}, data = []){
     this.options = {}
-    this.dispatch = d3.dispatch(EVENTS.POINT.DRAG)
+    this.dispatch = d3.dispatch(EVENTS.POINT.DRAG, EVENTS.POINT.CLICK)
 
     this.setOptions(options)
     this.setData(data)
@@ -211,7 +211,7 @@ export class ScatterChart {
       .style('stroke', (d, i) => colors[variables[groupVariable].accessor(d, i)])
       .style('fill', (d, i) => colors[variables[groupVariable].accessor(d, i)])
       .style('cursor', 'move')
-      .on('click',  this.pointClick)
+      .on('click',  this.pointClick.bind(this))
       .on('mousedown.drag',  this.pointDrag.bind(this))
       .on('touchstart.drag', this.pointDrag.bind(this))
 
@@ -280,7 +280,8 @@ export class ScatterChart {
     self.update()
   }
 
-  pointClick(){
+  pointClick(d, i){
+    this.dispatch[EVENTS.POINT.CLICK](d, i)
     d3.event.preventDefault()
     d3.event.stopPropagation()
   }

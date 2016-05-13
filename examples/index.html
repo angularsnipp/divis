@@ -137,6 +137,14 @@
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('scatterChartLog', text);
   });
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('scatterChartLog', text);
+  });
+
 
 </script>
 
