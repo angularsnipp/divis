@@ -11,6 +11,14 @@ const defaults = {
   xAccessor: d => d.x,
   yAccessor: d => d.y,
   groupAccessor: d => d.group,
+  xVariable: 'x',
+  yVariable: 'y',
+  groupVariable: 'group',
+  variables: {
+    x: { name: 'X', accessor: d => d.x },
+    y: { name: 'Y', accessor: d => d.y },
+    group: { name: 'Group', accessor: d => d.group }
+  },
   colors: d3.scale.category20().range().slice(10)
 }
 
@@ -60,13 +68,21 @@ export class ScatterChart {
   }
 
   calculateLimits(){
-    let { options: _, data} = this
-    const { xAccessor, yAccessor } = _
+    //let { options: _, data} = this
+    //const { xAccessor, yAccessor } = _
+    //
+    //_.xMax = d3.max(data, xAccessor)
+    //_.xMin = d3.min(data, xAccessor)
+    //_.yMax = d3.max(data, yAccessor)
+    //_.yMin = d3.min(data, yAccessor)
 
-    _.xMax = d3.max(data, xAccessor)
-    _.xMin = d3.min(data, xAccessor)
-    _.yMax = d3.max(data, yAccessor)
-    _.yMin = d3.min(data, yAccessor)
+    let { options: _, data} = this
+    const { variables, xVariable, yVariable } = _
+
+    _.xMax = d3.max(data, variables[xVariable].accessor)
+    _.xMin = d3.min(data, variables[xVariable].accessor)
+    _.yMax = d3.max(data, variables[yVariable].accessor)
+    _.yMin = d3.min(data, variables[yVariable].accessor)
   }
 
   init(){
@@ -90,6 +106,10 @@ export class ScatterChart {
       xAccessor,
       yAccessor,
       groupAccessor,
+      variables,
+      xVariable,
+      yVariable,
+      groupVariable,
       colors
       } = options
 
@@ -199,11 +219,11 @@ export class ScatterChart {
       .append('circle')
       .attr('class', 'dot')
       .classed('selected', d => d === self.selected )
-      .attr('cx', d => self.x(xAccessor(d)))
-      .attr('cy', d => self.y(yAccessor(d)))
+      .attr('cx', d => self.x(variables[xVariable].accessor(d)))
+      .attr('cy', d => self.y(variables[yVariable].accessor(d)))
       .attr('r', 5.0)
-      .style('stroke', (d, i) => colors[groupAccessor(d, i)])
-      .style('fill', (d, i) => colors[groupAccessor(d, i)])
+      .style('stroke', (d, i) => colors[variables[groupVariable].accessor(d, i)])
+      .style('fill', (d, i) => colors[variables[groupVariable].accessor(d, i)])
       .style('cursor', 'move')
       .on('click',  this.pointClick)
       .on('mousedown.drag',  this.pointDrag())
@@ -243,12 +263,12 @@ export class ScatterChart {
 
   update() {
     const { dots, x, y, selected } = this
-    const { xAccessor, yAccessor } = this.options
+    const { xAccessor, yAccessor, variables, xVariable, yVariable } = this.options
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
-      .attr('cx', d => x(xAccessor(d)))
-      .attr('cy', d => y(yAccessor(d)))
+      .attr('cx', d => x(variables[xVariable].accessor(d)))
+      .attr('cy', d => y(variables[yVariable].accessor(d)))
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
