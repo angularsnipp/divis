@@ -287,11 +287,13 @@ export class ScatterChart {
   }
 
   mousemove() {
+    const { xVariable, yVariable } = this.options
     const self = this, p = d3.mouse(self.g[0][0])
 
     if (self.dragged) {
-      self.dragged.x = self.x.invert(Math.max(0, Math.min(self.options.w, p[0])))
-      self.dragged.y = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
+      //TODO: need the right way (via accessors) to save values to dragged
+      self.dragged[xVariable] = self.x.invert(Math.max(0, Math.min(self.options.w, p[0])))
+      self.dragged[yVariable] = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
       self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.update()
     }
