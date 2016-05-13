@@ -72,18 +72,20 @@
   var lineChart = new Divis.LineChart(lineChartOptions, lineChartData);
   lineChart.render();
 
-  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
         '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
+        '<div class="log-index">i: '+ i +'</div>' +
+        '<div class="log-series-index">series: '+ s +'</div>';
     logEvent('lineChartLog', text);
   });
-  lineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+  lineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i, s){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
         '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
+        '<div class="log-index">i: '+ i +'</div>' +
+        '<div class="log-series-index">series: '+ s +'</div>';
     logEvent('lineChartLog', text);
   });
 
@@ -118,18 +120,20 @@
   var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
   multiLineChart.render();
 
-  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
         '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
+        '<div class="log-index">i: '+ i +'</div>' +
+        '<div class="log-series-index">series: '+ s +'</div>';
     logEvent('multiLineChartLog', text);
   });
-  multiLineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i, s){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
         '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
+        '<div class="log-index">i: '+ i +'</div>' +
+        '<div class="log-series-index">series: '+ s +'</div>';
     logEvent('multiLineChartLog', text);
   });
 
