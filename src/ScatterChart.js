@@ -212,8 +212,8 @@ export class ScatterChart {
       .style('fill', (d, i) => colors[variables[groupVariable].accessor(d, i)])
       .style('cursor', 'move')
       .on('click',  this.pointClick)
-      .on('mousedown.drag',  this.pointDrag())
-      .on('touchstart.drag', this.pointDrag())
+      .on('mousedown.drag',  this.pointDrag.bind(this))
+      .on('touchstart.drag', this.pointDrag.bind(this))
 
     // Reset button
     d3.select(target)
@@ -267,18 +267,17 @@ export class ScatterChart {
     this.update()
   }
 
-  pointDrag() {
+  pointDrag(d, i) {
     const self = this
-    return function(d, i) {
-      if (d3.event) {
-        d3.event.preventDefault()
-        d3.event.stopPropagation()
-      }
 
-      self.selected = self.dragged = d
-      self.pointIndex = i
-      self.update()
+    if (d3.event) {
+      d3.event.preventDefault()
+      d3.event.stopPropagation()
     }
+
+    self.selected = self.dragged = d
+    self.pointIndex = i
+    self.update()
   }
 
   pointClick(){
