@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Divis Line Chart</title>
+  <link rel="stylesheet" href="../build/divis.css"/>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+
+<div class="examples">
+  <a href="index.html">Index</a>
+</div>
+
+<div class="grid border">
+
+  <div class="grid-cell">
+    <h3>Scatter vs Lines</h3>
+    <div class="grid">
+      <div id="scatterChart" class="grid-cell zero-padding"></div>
+      <div id="lineChart" class="grid-cell zero-padding"></div>
+    </div>
+  </div>
+
+  <div class="grid-cell c30">
+    <div id="chartLog" class="log">
+      <div style="font-style: italic; text-decoration: underline;">LOG</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../node_modules/d3/d3.min.js"></script>
+<script src="../build/divis.js"></script>
+<script src="./script.js"></script>
+<script>
+
+  var data = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: parseInt(3*Math.random()) } });
+
+  // SCATTER CHART
+  var scatterChartOptions = {
+    target: '#scatterChart',
+    height: 400,
+    margin: { top: 20, right: 30, bottom: 40, left: 40 }
+  };
+
+  var scatterChart = new Divis.ScatterChart(scatterChartOptions, data);
+  scatterChart.render();
+
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('chartLog', text);
+
+    //redraw the line chart
+    lineChart.redraw();
+  });
+
+  // LINE CHART
+  var lineChartOptions = {
+    target: '#lineChart',
+    height: 400,
+    margin: { top: 20, right: 30, bottom: 40, left: 40 }
+  };
+
+  var lineChart = new Divis.LineChart(lineChartOptions, data);
+  lineChart.render();
+
+  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('chartLog', text);
+
+    //redraw the scatter chart
+    scatterChart.redraw();
+  });
+</script>
+</body>
+</html>
