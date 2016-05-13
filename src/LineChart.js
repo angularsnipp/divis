@@ -24,7 +24,7 @@ export class LineChart {
 
   constructor(options = {}, data = []){
     this.options = {}
-    this.dispatch = d3.dispatch(EVENTS.POINT.DRAG)
+    this.dispatch = d3.dispatch(EVENTS.POINT.DRAG, EVENTS.POINT.CLICK)
 
     this.setOptions(options)
     this.setData(data)
@@ -230,7 +230,7 @@ export class LineChart {
       .style('stroke', (d, i, s) => colors[s])
       .style('fill', (d, i, s) => colors[s])
       .style('cursor', 'ns-resize')
-      .on('click',  this.pointClick)
+      .on('click',  this.pointClick.bind(this))
       .on('mousedown.drag', this.pointDrag.bind(this))
       .on('touchstart.drag', this.pointDrag.bind(this))
 
@@ -306,7 +306,8 @@ export class LineChart {
     self.update()
   }
 
-  pointClick(){
+  pointClick(d, i, s){
+    this.dispatch[EVENTS.POINT.CLICK](d, i, s)
     d3.event.preventDefault()
     d3.event.stopPropagation()
   }

@@ -79,6 +79,13 @@
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('lineChartLog', text);
   });
+  lineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('lineChartLog', text);
+  });
 
 
   // MULTI LINE CHART
@@ -114,6 +121,13 @@
   multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     var text =
         '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
+        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
+        '<div class="log-index">i: '+ i +'</div>';
+    logEvent('multiLineChartLog', text);
+  });
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+    var text =
+        '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
         '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
         '<div class="log-index">i: '+ i +'</div>';
     logEvent('multiLineChartLog', text);
