@@ -205,8 +205,8 @@ export class ScatterChart {
       .append('circle')
       .attr('class', 'dot')
       .classed('selected', d => d === self.selected )
-      .attr('cx', d => self.x(variables[xVariable].accessor(d)))
-      .attr('cy', d => self.y(variables[yVariable].accessor(d)))
+      .attr('cx', (d, i) => self.x(variables[xVariable].accessor(d, i)))
+      .attr('cy', (d, i) => self.y(variables[yVariable].accessor(d, i)))
       .attr('r', 5.0)
       .style('stroke', (d, i) => colors[variables[groupVariable].accessor(d, i)])
       .style('fill', (d, i) => colors[variables[groupVariable].accessor(d, i)])
@@ -253,8 +253,8 @@ export class ScatterChart {
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
-      .attr('cx', d => x(variables[xVariable].accessor(d)))
-      .attr('cy', d => y(variables[yVariable].accessor(d)))
+      .attr('cx', (d, i) => x(variables[xVariable].accessor(d, i)))
+      .attr('cy', (d, i) => y(variables[yVariable].accessor(d, i)))
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()

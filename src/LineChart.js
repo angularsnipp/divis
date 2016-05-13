@@ -68,8 +68,8 @@ export class LineChart {
 
     _.xMax = d3.max(data, variables[xVariable].accessor)
     _.xMin = d3.min(data, variables[xVariable].accessor)
-    _.yMax = d3.max(data, d => d3.max(yVariables, v => variables[v].accessor(d)))
-    _.yMin = d3.min(data, d => d3.min(yVariables, v => variables[v].accessor(d)))
+    _.yMax = d3.max(data, (d, i) => d3.max(yVariables, v => variables[v].accessor(d, i)))
+    _.yMin = d3.min(data, (d, i) => d3.min(yVariables, v => variables[v].accessor(d, i)))
   }
 
   init(){
@@ -122,7 +122,7 @@ export class LineChart {
       .tickPadding(10)
 
     this.line = d3.svg.line()
-      .x(d => self.x(variables[xVariable].accessor(d)))
+      .x((d, i) => self.x(variables[xVariable].accessor(d, i)))
 
     this.zoom = d3.behavior.zoom()
       .x(this.x)
@@ -203,7 +203,7 @@ export class LineChart {
       .attr('class', 'line')
       .attr('clip-path', 'url(#clip)')
       .attr('d', v => {
-        return self.line.y(d => self.y(variables[v].accessor(d)))(data)
+        return self.line.y((d, i) => self.y(variables[v].accessor(d, i)))(data)
       })
       .style('stroke', (v, i) => colors[i % colors.length])
 
@@ -224,8 +224,8 @@ export class LineChart {
       .append('circle')
       .attr('class', 'dot')
       .classed('selected', d => d === self.selected )
-      .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d)))
-      .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d)))
+      .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d, i)))
+      .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d, i)))
       .attr('r', 5.0)
       .style('stroke', (d, i, s) => colors[s])
       .style('fill', (d, i, s) => colors[s])
@@ -273,13 +273,13 @@ export class LineChart {
     const { variables, xVariable, yVariables } = this.options
 
     lines.attr('d', v => {
-      return line.y(d => y(variables[v].accessor(d)))(data)
+      return line.y((d, i) => y(variables[v].accessor(d, i)))(data)
     })
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
-      .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d)))
-      .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d)))
+      .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
+      .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
