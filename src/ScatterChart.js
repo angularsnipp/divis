@@ -8,9 +8,6 @@ const defaults = {
   width: 400,
   height: 350,
   margin: {top: 20, right: 20, bottom: 40, left: 40},
-  xAccessor: d => d.x,
-  yAccessor: d => d.y,
-  groupAccessor: d => d.group,
   xVariable: 'x',
   yVariable: 'y',
   groupVariable: 'group',
@@ -68,14 +65,6 @@ export class ScatterChart {
   }
 
   calculateLimits(){
-    //let { options: _, data} = this
-    //const { xAccessor, yAccessor } = _
-    //
-    //_.xMax = d3.max(data, xAccessor)
-    //_.xMin = d3.min(data, xAccessor)
-    //_.yMax = d3.max(data, yAccessor)
-    //_.yMin = d3.min(data, yAccessor)
-
     let { options: _, data} = this
     const { variables, xVariable, yVariable } = _
 
@@ -103,9 +92,6 @@ export class ScatterChart {
       xMin,
       yMax,
       yMin,
-      xAccessor,
-      yAccessor,
-      groupAccessor,
       variables,
       xVariable,
       yVariable,
@@ -263,7 +249,7 @@ export class ScatterChart {
 
   update() {
     const { dots, x, y, selected } = this
-    const { xAccessor, yAccessor, variables, xVariable, yVariable } = this.options
+    const { variables, xVariable, yVariable } = this.options
 
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
