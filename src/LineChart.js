@@ -215,7 +215,7 @@ export class LineChart {
       .attr('d', v => {
         return self.line.y((d, i) => self.y(variables[v].accessor(d, i)))(data)
       })
-      .style('stroke', (v, i) => colors[i % colors.length])
+      .style('stroke', (v, i) => variables[v].color || colors[i])
 
     this.lines.exit().remove()
 
@@ -237,8 +237,8 @@ export class LineChart {
       .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d, i)))
       .attr('r', 5.0)
-      .style('stroke', (d, i, s) => colors[s])
-      .style('fill', (d, i, s) => colors[s])
+      .style('stroke', (d, i, s) => variables[yVariables[s]].color || colors[s])
+      .style('fill', (d, i, s) => variables[yVariables[s]].color || colors[s])
       .style('cursor', 'ns-resize')
       .on('click',  this.pointClick.bind(this))
       .on('mousedown.drag', this.pointDrag.bind(this))
@@ -267,7 +267,7 @@ export class LineChart {
       .append('rect')
       .attr('width', legend.itemHeight)
       .attr('height', legend.itemHeight)
-      .attr('fill', (v, i) => v.color || colors[i])
+      .attr('fill', (v, i) => variables[v].color || colors[i])
 
     item.append('text')
       .text(v => variables[v].name)
