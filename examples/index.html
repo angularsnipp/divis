@@ -73,20 +73,10 @@
   lineChart.render();
 
   lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>' +
-        '<div class="log-series-index">series: '+ s +'</div>';
-    logEvent('lineChartLog', text);
+    logEvent('lineChartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i, s: s });
   });
   lineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i, s){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>' +
-        '<div class="log-series-index">series: '+ s +'</div>';
-    logEvent('lineChartLog', text);
+    logEvent('lineChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
   });
 
 
@@ -121,20 +111,10 @@
   multiLineChart.render();
 
   multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>' +
-        '<div class="log-series-index">series: '+ s +'</div>';
-    logEvent('multiLineChartLog', text);
+    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i, s: s });
   });
   multiLineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i, s){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>' +
-        '<div class="log-series-index">series: '+ s +'</div>';
-    logEvent('multiLineChartLog', text);
+    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
   });
 
   // SCATTER CHART
@@ -149,18 +129,10 @@
   scatterChart.render();
 
   scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('scatterChartLog', text);
+    logEvent('scatterChartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i});
   });
   scatterChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.CLICK +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('scatterChartLog', text);
+    logEvent('scatterChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i });
   });
 
 
