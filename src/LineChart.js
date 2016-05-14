@@ -14,7 +14,16 @@ const defaults = {
     x: { name: 'X', accessor: d => d.x },
     y: { name: 'Y', accessor: d => d.y }
   },
-  colors: d3.scale.category20().range().slice(10)
+  colors: d3.scale.category20().range().slice(10),
+  legend: {
+    align: 'left',
+    x: 0,
+    y: 0,
+    itemHeight: 12,
+    itemWidth: 50,
+    gap: 5,
+    isHorizontal: true
+  }
 }
 
 /**
@@ -93,7 +102,8 @@ export class LineChart {
       variables,
       xVariable,
       yVariables,
-      colors
+      colors,
+      legend
       } = options
 
     // x-scale
@@ -235,6 +245,36 @@ export class LineChart {
       .on('touchstart.drag', this.pointDrag.bind(this))
 
     this.dots.exit().remove()
+
+    // Legend
+    // TODO: now translate is for horizontal legend
+    this.legend = this.svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${ legend.align === 'left' ? width - margin.right - legend.x - yVariables.length * legend.itemWidth : margin.left + legend.x }, ${legend.y})`);
+
+    const items = this.legend.selectAll('legend-item')
+      .data(yVariables)
+
+    const item = items.enter()
+      .append('g')
+      .attr('class', 'legend-item')
+      .attr('transform', (v, i) => legend.isHorizontal
+        ? `translate(${i * legend.itemWidth}, 0)`
+        : `translate(0, ${i * legend.itemHeight})`
+      )
+
+    item
+      .append('rect')
+      .attr('width', legend.itemHeight)
+      .attr('height', legend.itemHeight)
+      .attr('fill', (v, i) => v.color || colors[i])
+
+    item.append('text')
+      .text(v => variables[v].name)
+      .attr('x', legend.itemHeight + legend.gap)
+      .attr('y', v => legend.itemHeight - 1)
+
+    items.exit().remove()
 
     // Reset button
     d3.select(target)
