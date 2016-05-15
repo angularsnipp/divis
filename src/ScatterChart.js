@@ -243,12 +243,14 @@ export class ScatterChart {
       .attr('cy', (d, i) => self.y(variables[yVariable].accessor(d, i)))
       .attr('r', 5.0)
       .style('stroke', (d, i) => {
-        const g = variables[groupVariable].accessor(d, i)
-        return variables[groupVariable].values[g].color || colors[g]
+        const groupName = variables[groupVariable].accessor(d, i)
+        const group = variables[groupVariable].values[groupName]
+        return group.color || colors[group.id]
       })
       .style('fill', (d, i) => {
-        const g = variables[groupVariable].accessor(d, i)
-        return variables[groupVariable].values[g].color || colors[g]
+        const groupName = variables[groupVariable].accessor(d, i)
+        const group = variables[groupVariable].values[groupName]
+        return group.color || colors[group.id]
       })
       .style('cursor', 'move')
       .on('click',  this.pointClick.bind(this))
@@ -276,7 +278,10 @@ export class ScatterChart {
       .append('rect')
       .attr('width', legend.itemHeight)
       .attr('height', legend.itemHeight)
-      .attr('fill', g => variables[groupVariable].values[g].color || colors[g])
+      .attr('fill', groupName => {
+        const group = variables[groupVariable].values[groupName]
+        return group.color || colors[group.id]
+      })
 
     item.append('text')
       .text(g => g)
