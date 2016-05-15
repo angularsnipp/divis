@@ -16,7 +16,16 @@ const defaults = {
     y: { name: 'Y', accessor: d => d.y },
     group: { name: 'Group', accessor: d => d.group }
   },
-  colors: d3.scale.category20().range().slice(10)
+  colors: d3.scale.category20().range().slice(10),
+  legend: {
+    align: 'left',
+    x: 0,
+    y: 0,
+    itemHeight: 12,
+    itemWidth: 50,
+    gap: 5,
+    isHorizontal: true
+  }
 }
 
 /**
@@ -61,6 +70,8 @@ export class ScatterChart {
 
   setData(_){
     this.data = _
+    this.uniqueGroups = this.getUniqueGroups()
+    console.log(this.uniqueGroups)
     return this
   }
 
@@ -74,9 +85,20 @@ export class ScatterChart {
     _.yMin = d3.min(data, variables[yVariable].accessor)
   }
 
+  getUniqueGroups(){
+    const { data } = this
+    const { variables, groupVariable } = this.options
+    let groups = [], g
+    for (let i = 0, l = data.length; i < l; i++) {
+      g = variables[groupVariable].accessor(data[i])
+      if (groups.indexOf(g) == -1) groups.push(g)
+    }
+    return groups.sort()
+  }
+
   init(){
     let self = this
-    const { options, data } = this
+    const { options, data, uniqueGroups } = this
 
     // calculate domain limits for x and y axes
     this.calculateLimits()
@@ -96,7 +118,8 @@ export class ScatterChart {
       xVariable,
       yVariable,
       groupVariable,
-      colors
+      colors,
+      legend
       } = options
 
     // x-scale
@@ -214,6 +237,36 @@ export class ScatterChart {
       .on('click',  this.pointClick.bind(this))
       .on('mousedown.drag',  this.pointDrag.bind(this))
       .on('touchstart.drag', this.pointDrag.bind(this))
+
+    // Legend
+    // TODO: now translate is for horizontal legend
+    this.legend = this.svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${ legend.align === 'left' ? width - margin.right - legend.x - uniqueGroups.length * legend.itemWidth : margin.left + legend.x }, ${legend.y})`);
+
+    const items = this.legend.selectAll('legend-item')
+      .data(uniqueGroups)
+
+    const item = items.enter()
+      .append('g')
+      .attr('class', 'legend-item')
+      .attr('transform', (v, i) => legend.isHorizontal
+        ? `translate(${i * legend.itemWidth}, 0)`
+        : `translate(0, ${i * legend.itemHeight})`
+      )
+
+    item
+      .append('rect')
+      .attr('width', legend.itemHeight)
+      .attr('height', legend.itemHeight)
+      .attr('fill', g => colors[g])
+
+    item.append('text')
+      .text(g => g)
+      .attr('x', legend.itemHeight + legend.gap)
+      .attr('y', g => legend.itemHeight - 1)
+
+    items.exit().remove()
 
     // Reset button
     d3.select(target)
