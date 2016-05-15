@@ -14,7 +14,14 @@ const defaults = {
   variables: {
     x: { name: 'X', accessor: d => d.x },
     y: { name: 'Y', accessor: d => d.y },
-    group: { name: 'Group', accessor: d => d.group }
+    group: {
+      name: 'Group',
+      accessor: d => d.group,
+      values: {
+        0: { id: 0 },
+        1: { id: 1 }
+      }
+    }
   },
   colors: d3.scale.category20().range().slice(10),
   legend: {
@@ -70,8 +77,10 @@ export class ScatterChart {
 
   setData(_){
     this.data = _
+
+    // define unique groups when specifying data
     this.uniqueGroups = this.getUniqueGroups()
-    console.log(this.uniqueGroups)
+
     return this
   }
 
@@ -86,14 +95,16 @@ export class ScatterChart {
   }
 
   getUniqueGroups(){
-    const { data } = this
     const { variables, groupVariable } = this.options
-    let groups = [], g
-    for (let i = 0, l = data.length; i < l; i++) {
-      g = variables[groupVariable].accessor(data[i])
-      if (groups.indexOf(g) == -1) groups.push(g)
-    }
-    return groups.sort()
+    return Object.keys(variables[groupVariable].values)
+    //const { data } = this
+    //const { variables, groupVariable } = this.options
+    //let groups = [], g
+    //for (let i = 0, l = data.length; i < l; i++) {
+    //  g = variables[groupVariable].accessor(data[i])
+    //  if (groups.indexOf(g) == -1) groups.push(g)
+    //}
+    //return groups.sort()
   }
 
   init(){
@@ -231,8 +242,14 @@ export class ScatterChart {
       .attr('cx', (d, i) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => self.y(variables[yVariable].accessor(d, i)))
       .attr('r', 5.0)
-      .style('stroke', (d, i) => colors[variables[groupVariable].accessor(d, i)])
-      .style('fill', (d, i) => colors[variables[groupVariable].accessor(d, i)])
+      .style('stroke', (d, i) => {
+        const g = variables[groupVariable].accessor(d, i)
+        return variables[groupVariable].values[g].color || colors[g]
+      })
+      .style('fill', (d, i) => {
+        const g = variables[groupVariable].accessor(d, i)
+        return variables[groupVariable].values[g].color || colors[g]
+      })
       .style('cursor', 'move')
       .on('click',  this.pointClick.bind(this))
       .on('mousedown.drag',  this.pointDrag.bind(this))
@@ -250,7 +267,7 @@ export class ScatterChart {
     const item = items.enter()
       .append('g')
       .attr('class', 'legend-item')
-      .attr('transform', (v, i) => legend.isHorizontal
+      .attr('transform', (g, i) => legend.isHorizontal
         ? `translate(${i * legend.itemWidth}, 0)`
         : `translate(0, ${i * legend.itemHeight})`
       )
@@ -259,7 +276,7 @@ export class ScatterChart {
       .append('rect')
       .attr('width', legend.itemHeight)
       .attr('height', legend.itemHeight)
-      .attr('fill', g => colors[g])
+      .attr('fill', g => variables[groupVariable].values[g].color || colors[g])
 
     item.append('text')
       .text(g => g)
