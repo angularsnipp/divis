@@ -90,13 +90,14 @@ export class ScatterChart {
   }
 
   calculateLimits(){
-    let { options: _, data} = this
-    const { variables, xVariable, yVariable } = _
+    let { options } = this
+    const { data } = this
+    const { variables, xVariable, yVariable } = options
 
-    _.xMax = d3.max(data, variables[xVariable].accessor)
-    _.xMin = d3.min(data, variables[xVariable].accessor)
-    _.yMax = d3.max(data, variables[yVariable].accessor)
-    _.yMin = d3.min(data, variables[yVariable].accessor)
+    options.xMax = d3.max(data, variables[xVariable].accessor)
+    options.xMin = d3.min(data, variables[xVariable].accessor)
+    options.yMax = d3.max(data, variables[yVariable].accessor)
+    options.yMin = d3.min(data, variables[yVariable].accessor)
   }
 
   getUniqueGroups(){
