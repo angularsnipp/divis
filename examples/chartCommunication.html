@@ -71,11 +71,7 @@
   scatterChart.render();
 
   scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('chartLog', text);
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i });
 
     //redraw the line chart
     lineChart.redraw();
@@ -98,12 +94,8 @@
   var lineChart = new Divis.LineChart(lineChartOptions, data);
   lineChart.render();
 
-  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    var text =
-        '<div class="log-event">'+ Divis.EVENTS.POINT.DRAG +'</div>' +
-        '<div class="log-data">data: <pre>'+ JSON.stringify(d, null, 2) +'</pre></div>' +
-        '<div class="log-index">i: '+ i +'</div>';
-    logEvent('chartLog', text);
+  lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
 
     //redraw the scatter chart
     scatterChart.redraw();
