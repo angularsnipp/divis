@@ -23,3 +23,9 @@ function logEvent(element, _, text){
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
 }
+
+function onResizeHandler(callback){
+  document.addEventListener('DOMContentLoaded', function(){
+    window.addEventListener('resize', callback)
+  })
+}

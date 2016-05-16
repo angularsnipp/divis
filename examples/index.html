@@ -159,6 +159,12 @@
     logEvent('scatterChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i });
   });
 
+  // Resizing
+  onResizeHandler(function(){
+    lineChart.resize();
+    multiLineChart.resize();
+  });
+
 </script>
 
 </body>

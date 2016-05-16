@@ -470,4 +470,10 @@ export class LineChart {
         }
       })
   }
+
+  resize(){
+    this.calculateSize()
+    this.calculateLimits()
+    this.render()
+  }
 }
