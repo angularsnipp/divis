@@ -5,8 +5,6 @@ import { EVENTS } from './Events'
  * Default config
  */
 const defaults = {
-  width: 400,
-  height: 350,
   margin: {top: 20, right: 20, bottom: 40, left: 40},
   xVariable: 'x',
   yVariables: ['y'],
@@ -37,32 +35,10 @@ export class LineChart {
 
     this.setOptions(options)
     this.setData(data)
-
-    this.init()
   }
 
   setOptions(_){
-    // Set width and height
-    const elem = d3.select(_.target).node()
-
-    // set width
-    if (!_.width) {
-      _.width = elem.clientWidth
-    }
-
-    // set height
-    if (!_.height) {
-      _.height = elem.clientHeight
-    }
-
-    // merge options
     Object.assign(this.options, defaults, _)
-
-    // calculate width and height without margins
-    const { width, height, margin } = this.options
-    this.options.w = width - margin.left - margin.right
-    this.options.h = height - margin.top - margin.bottom
-
     return this
   }
 
@@ -71,8 +47,27 @@ export class LineChart {
     return this
   }
 
+  // Set width and height
+  calculateSize(){
+    let { options: _ } = this
+
+    const elem = d3.select(_.target).node()
+
+    // set width
+    if (!_.width) _.width = elem.clientWidth || 400
+
+    // set height
+    if (!_.height) _.height = elem.clientHeight || 350
+
+    // calculate width and height without margins
+    const { width, height, margin } = _
+    _.w = width - margin.left - margin.right
+    _.h = height - margin.top - margin.bottom
+  }
+
   calculateLimits(){
-    let { options: _, data} = this
+    let { options: _} = this
+    const { data } = this
     const { variables, xVariable, yVariables } = _
 
     _.xMax = d3.max(data, variables[xVariable].accessor)
@@ -84,6 +79,9 @@ export class LineChart {
   init(){
     let self = this
     const { options, data } = this
+
+    // calculate width, height, w, h
+    this.calculateSize()
 
     // calculate domain limits for x and y axes
     this.calculateLimits()
@@ -296,7 +294,14 @@ export class LineChart {
       .on('touchend.drag',  this.mouseup.bind(this))
   }
 
+  clear(){
+    const { target } = this.options
+    d3.select(target).selectAll('*').remove()
+  }
+
   render(){
+    this.clear()
+    this.init()
     this.redraw()
   }
 
