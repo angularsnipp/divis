@@ -5,8 +5,6 @@ import { EVENTS } from './Events'
  * Default config
  */
 const defaults = {
-  width: 400,
-  height: 350,
   margin: {top: 20, right: 20, bottom: 40, left: 40},
   xVariable: 'x',
   yVariable: 'y',
@@ -47,30 +45,18 @@ export class ScatterChart {
     this.setOptions(options)
     this.setData(data)
 
-    this.init()
+    // calculate width, height, w, h
+    this.calculateSize()
+
+    // calculate domain limits for x and y axes
+    this.calculateLimits()
   }
 
   setOptions(_){
-    // Set width and height
-    const elem = d3.select(_.target).node()
+    // save initial options
+    this._options = _
 
-    // set width
-    if (!_.width) {
-      _.width = elem.clientWidth
-    }
-
-    // set height
-    if (!_.height) {
-      _.height = elem.clientHeight
-    }
-
-    // merge options
     Object.assign(this.options, defaults, _)
-
-    // calculate width and height without margins
-    const { width, height, margin } = this.options
-    this.options.w = width - margin.left - margin.right
-    this.options.h = height - margin.top - margin.bottom
 
     return this
   }
@@ -82,6 +68,25 @@ export class ScatterChart {
     this.uniqueGroups = this.getUniqueGroups()
 
     return this
+  }
+
+  // Set width and height
+  calculateSize(){
+    const { width: staticWidth, height: staticHeight } = this._options
+    let { options } = this
+
+    const elem = d3.select(options.target).node()
+
+    // set width
+    options.width = staticWidth || elem.clientWidth || 400
+
+    // set height
+    options.height = staticHeight || elem.clientHeight || 350
+
+    // calculate width and height without margins
+    const { width, height, margin } = options
+    options.w = width - margin.left - margin.right
+    options.h = height - margin.top - margin.bottom
   }
 
   calculateLimits(){
@@ -110,9 +115,6 @@ export class ScatterChart {
   init(){
     let self = this
     const { options, data, uniqueGroups } = this
-
-    // calculate domain limits for x and y axes
-    this.calculateLimits()
 
     const {
       target,
@@ -310,7 +312,14 @@ export class ScatterChart {
       .on('touchend.drag',  this.mouseup.bind(this))
   }
 
+  clear(){
+    const { target } = this.options
+    d3.select(target).selectAll('*').remove()
+  }
+
   render(){
+    this.clear()
+    this.init()
     this.redraw()
   }
 
