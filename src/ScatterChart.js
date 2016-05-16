@@ -480,4 +480,10 @@ export class ScatterChart {
         }
       })
   }
+
+  resize(){
+    this.calculateSize()
+    this.calculateLimits()
+    this.render()
+  }
 }
