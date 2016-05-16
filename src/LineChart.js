@@ -35,10 +35,20 @@ export class LineChart {
 
     this.setOptions(options)
     this.setData(data)
+
+    // calculate width, height, w, h
+    this.calculateSize()
+
+    // calculate domain limits for x and y axes
+    this.calculateLimits()
   }
 
   setOptions(_){
+    // save initial options
+    this._options = _
+
     Object.assign(this.options, defaults, _)
+
     return this
   }
 
@@ -49,42 +59,37 @@ export class LineChart {
 
   // Set width and height
   calculateSize(){
-    let { options: _ } = this
+    const { width: staticWidth, height: staticHeight } = this._options
+    let { options } = this
 
-    const elem = d3.select(_.target).node()
+    const elem = d3.select(options.target).node()
 
     // set width
-    if (!_.width) _.width = elem.clientWidth || 400
+    options.width = staticWidth || elem.clientWidth || 400
 
     // set height
-    if (!_.height) _.height = elem.clientHeight || 350
+    options.height = staticHeight || elem.clientHeight || 350
 
     // calculate width and height without margins
-    const { width, height, margin } = _
-    _.w = width - margin.left - margin.right
-    _.h = height - margin.top - margin.bottom
+    const { width, height, margin } = options
+    options.w = width - margin.left - margin.right
+    options.h = height - margin.top - margin.bottom
   }
 
   calculateLimits(){
-    let { options: _} = this
+    let { options } = this
     const { data } = this
-    const { variables, xVariable, yVariables } = _
+    const { variables, xVariable, yVariables } = options
 
-    _.xMax = d3.max(data, variables[xVariable].accessor)
-    _.xMin = d3.min(data, variables[xVariable].accessor)
-    _.yMax = d3.max(data, (d, i) => d3.max(yVariables, v => variables[v].accessor(d, i)))
-    _.yMin = d3.min(data, (d, i) => d3.min(yVariables, v => variables[v].accessor(d, i)))
+    options.xMax = d3.max(data, variables[xVariable].accessor)
+    options.xMin = d3.min(data, variables[xVariable].accessor)
+    options.yMax = d3.max(data, (d, i) => d3.max(yVariables, v => variables[v].accessor(d, i)))
+    options.yMin = d3.min(data, (d, i) => d3.min(yVariables, v => variables[v].accessor(d, i)))
   }
 
   init(){
     let self = this
     const { options, data } = this
-
-    // calculate width, height, w, h
-    this.calculateSize()
-
-    // calculate domain limits for x and y axes
-    this.calculateLimits()
 
     const { 
       target, 
