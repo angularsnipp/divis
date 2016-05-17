@@ -5,6 +5,7 @@ import { EVENTS } from './Events'
  * Default config
  */
 const defaults = {
+  id: Math.random().toString(36).substr(2, 15),
   margin: {top: 20, right: 20, bottom: 40, left: 40},
   xVariable: 'x',
   yVariable: 'y',
@@ -118,6 +119,7 @@ export class ScatterChart {
     const { options, data, uniqueGroups } = this
 
     const {
+      id,
       target,
       width,
       height,
