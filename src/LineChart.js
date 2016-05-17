@@ -42,6 +42,9 @@ export class LineChart {
 
     // calculate domain limits for x and y axes
     this.calculateLimits()
+
+    // init global events
+    this.initGlobalEvents()
   }
 
   setOptions(_){
@@ -299,6 +302,28 @@ export class LineChart {
       .on('touchmove.drag', this.mousemove.bind(this))
       .on('mouseup.drag',   this.mouseup.bind(this))
       .on('touchend.drag',  this.mouseup.bind(this))
+  }
+
+  initGlobalEvents(element = window){
+    const self = this
+    const { id } = this.options
+
+    d3.select(element)
+      .on('keydown.' + id, _ => {
+        self.keyPressed = d3.event.keyCode
+      })
+      .on('keyup.' + id, _ => {
+        self.keyPressed = null
+      })
+  }
+
+  clearGlobalEvents(element = window){
+    const self = this
+    const { id } = this.options
+
+    d3.select(element)
+      .on('keydown.' + id, null)
+      .on('keyup.' + id, null)
   }
 
   clear(){
