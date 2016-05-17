@@ -5,7 +5,6 @@ import { EVENTS } from './Events'
  * Default config
  */
 const defaults = {
-  id: Math.random().toString(36).substr(2, 15),
   margin: {top: 20, right: 20, bottom: 40, left: 40},
   xVariable: 'x',
   yVariables: ['y'],
@@ -36,6 +35,9 @@ export class LineChart {
 
     this.setOptions(options)
     this.setData(data)
+
+    // define chart id
+    this.options.id = Math.random().toString(36).substr(2, 15)
 
     // calculate width, height, w, h
     this.calculateSize()
@@ -145,6 +147,7 @@ export class LineChart {
     this.zoom = d3.behavior.zoom()
       .x(this.x)
       .y(this.y)
+      .on('zoomstart', this.zoomStart.bind(this))
       .on('zoom', this.zoomed.bind(this))
 
     // drag x-axis
@@ -460,8 +463,29 @@ export class LineChart {
     }
   }
 
+  zoomStart(){
+    this.zoomTemp = {
+      xDomain: this.x.domain(),
+      yDomain: this.y.domain()
+    }
+  }
+
   zoomed() {
     const self = this
+
+    switch (self.keyPressed) {
+
+      // H, horizontal zoom
+      case 72:
+        self.y.domain(self.zoomTemp.yDomain)
+        break
+
+      // V, vertical zoom
+      case 86:
+        self.x.domain(self.zoomTemp.xDomain);
+        break
+    }
+
     self.xAxisG.call(self.xAxis)
     self.yAxisG.call(self.yAxis)
     self.update()
