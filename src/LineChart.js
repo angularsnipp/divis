@@ -147,7 +147,6 @@ export class LineChart {
     this.zoom = d3.behavior.zoom()
       .x(this.x)
       .y(this.y)
-      .on('zoomstart', this.zoomStart.bind(this))
       .on('zoom', this.zoomed.bind(this))
 
     // define dragged and selected point
@@ -403,28 +402,8 @@ export class LineChart {
     }
   }
 
-  zoomStart(){
-    this.zoomTemp = {
-      xDomain: this.x.domain(),
-      yDomain: this.y.domain()
-    }
-  }
-
   zoomed() {
     const self = this
-
-    switch (self.keyPressed) {
-
-      // H, horizontal zoom
-      case 72:
-        self.y.domain(self.zoomTemp.yDomain)
-        break
-
-      // V, vertical zoom
-      case 86:
-        self.x.domain(self.zoomTemp.xDomain);
-        break
-    }
 
     self.xAxisG.call(self.xAxis)
     self.yAxisG.call(self.yAxis)
