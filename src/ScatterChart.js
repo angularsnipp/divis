@@ -425,9 +425,33 @@ export class ScatterChart {
   zoomed() {
     const self = this
 
+    // update zoom behaviour
+    self.updateZoom()
+
     self.xAxisG.call(self.xAxis)
     self.yAxisG.call(self.yAxis)
     self.update()
+  }
+
+  updateZoom(){
+    const self = this
+
+    self.zoom = d3.behavior.zoom()
+      .x(self.x)
+      .y(self.y)
+      .on('zoom', self.zoomed.bind(self))
+
+    self.xAxisZoom = d3.behavior.zoom()
+      .x(self.x)
+      .on('zoom', self.zoomed.bind(self))
+
+    self.yAxisZoom = d3.behavior.zoom()
+      .y(self.y)
+      .on('zoom', self.zoomed.bind(self))
+
+    self.zoomLayer.call(self.zoom)
+    self.xAxisZoomLayer.call(self.xAxisZoom)
+    self.yAxisZoomLayer.call(self.yAxisZoom)
   }
 
   reset(){
