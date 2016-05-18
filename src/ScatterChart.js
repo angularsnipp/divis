@@ -174,12 +174,6 @@ export class ScatterChart {
       .on('zoomstart', this.zoomStart.bind(this))
       .on('zoom', this.zoomed.bind(this))
 
-    // drag x-axis
-    this.xDrag = Math.NaN
-
-    // drag y-axis
-    this.yDrag = Math.NaN
-
     // define dragged and selected point
     this.dragged = this.selected = null
 
@@ -209,9 +203,6 @@ export class ScatterChart {
       .attr('transform', `translate(0, ${h})`)
       .attr('width', w)
       .attr('height', 20)
-      .on('mousedown.drag',  this.xAxisDrag.bind(this))
-      .on('touchstart.drag', this.xAxisDrag.bind(this))
-      .on('mouseout',  this.mouseup.bind(this))
 
     this.xAxisG = this.g.append('g')
       .attr('class', 'x axis')
@@ -224,9 +215,6 @@ export class ScatterChart {
       .attr('transform', `translate(-30,0)`)
       .attr('height', h)
       .attr('width', 30)
-      .on('mousedown.drag',  this.yAxisDrag.bind(this))
-      .on('touchstart.drag', this.yAxisDrag.bind(this))
-      .on('mouseout',  this.mouseup.bind(this))
 
     this.yAxisG = this.g.append('g')
       .attr('class', 'y axis')
@@ -412,42 +400,6 @@ export class ScatterChart {
       self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.update()
     }
-    if (!isNaN(self.xDrag)) {
-      self.g.style("cursor", "ew-resize")
-
-      const x = self.x.invert(p[0]),
-        x0 = self.x.domain()[0],
-        x1 = self.x.domain()[1],
-        range = x1 - x0
-
-      if ((x - x0) != 0) {
-        const dx = (self.xDrag - x0) / (x - x0)
-        const domain = [x0, x0 + (range * dx)]
-        self.x.domain(domain)
-        self.redraw()
-      }
-
-      d3.event.preventDefault()
-      d3.event.stopPropagation()
-    }
-    if (!isNaN(self.yDrag)) {
-      self.g.style("cursor", "ns-resize")
-
-      const y = self.y.invert(p[1]),
-        y0 = self.y.domain()[0],
-        y1 = self.y.domain()[1],
-        range = y1 - y0
-
-      if ((y - y0) != 0) {
-        const dy = (self.yDrag - y0) / (y - y0)
-        const domain = [y0, y0 + (range * dy)]
-        self.y.domain(domain)
-        self.redraw()
-      }
-
-      d3.event.preventDefault()
-      d3.event.stopPropagation()
-    }
   }
 
   mouseup() {
@@ -455,18 +407,6 @@ export class ScatterChart {
 
     self.g.style("cursor", "auto")
 
-    if (!isNaN(self.xDrag)) {
-      self.redraw()
-      self.xDrag = Math.NaN
-      d3.event.preventDefault()
-      d3.event.stopPropagation()
-    }
-    if (!isNaN(self.yDrag)) {
-      self.redraw()
-      self.yDrag = Math.NaN
-      d3.event.preventDefault()
-      d3.event.stopPropagation()
-    }
     if (self.dragged) {
       self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.dragged = null
@@ -499,18 +439,6 @@ export class ScatterChart {
     self.xAxisG.call(self.xAxis)
     self.yAxisG.call(self.yAxis)
     self.update()
-  }
-
-  xAxisDrag() {
-    const self = this
-    const p = d3.mouse(self.g[0][0])
-    self.xDrag = self.x.invert(p[0])
-  }
-
-  yAxisDrag() {
-    const self = this
-    const p = d3.mouse(self.g[0][0])
-    self.yDrag = self.y.invert(p[1])
   }
 
   reset(){
