@@ -149,6 +149,14 @@ export class LineChart {
       .y(this.y)
       .on('zoom', this.zoomed.bind(this))
 
+    this.xAxisZoom = d3.behavior.zoom()
+      .x(this.x)
+      .on('zoom', this.zoomed.bind(this))
+
+    this.yAxisZoom = d3.behavior.zoom()
+      .y(this.y)
+      .on('zoom', this.zoomed.bind(this))
+
     // define dragged and selected point
     this.dragged = this.selected = null
 
@@ -165,7 +173,7 @@ export class LineChart {
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
     // g zoom layer
-    this.g.append('rect')
+    this.zoomLayer = this.g.append('rect')
       .attr('class', 'zoom-layer')
       .attr('width', w)
       .attr('height', h)
@@ -173,11 +181,12 @@ export class LineChart {
 
     // X Axis
     // x axis layer
-    this.g.append('rect')
+    this.xAxisZoomLayer = this.g.append('rect')
       .attr('class', 'zoom-layer')
       .attr('transform', `translate(0, ${h})`)
       .attr('width', w)
       .attr('height', 20)
+      .call(this.xAxisZoom)
 
     this.xAxisG = this.g.append('g')
       .attr('class', 'x axis')
@@ -185,11 +194,12 @@ export class LineChart {
 
     // Y Axis
     // y axis layer
-    this.g.append('rect')
+    this.yAxisZoomLayer = this.g.append('rect')
       .attr('class', 'zoom-layer ')
       .attr('transform', `translate(-30,0)`)
       .attr('height', h)
       .attr('width', 30)
+      .call(this.yAxisZoom)
 
     this.yAxisG = this.g.append('g')
       .attr('class', 'y axis')
