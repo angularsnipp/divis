@@ -307,13 +307,21 @@ export class LineChart {
   initGlobalEvents(element = window){
     const self = this
     const { id } = this.options
+    const keyCodes = [72, 86] // ['H', 'V']
 
     d3.select(element)
       .on('keydown.' + id, _ => {
-        self.keyPressed = d3.event.keyCode
+        const keyCode = d3.event.keyCode
+        if (keyCodes.indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
+          self.keyPressed = keyCode
+          self.updateZoom()
+        }
       })
       .on('keyup.' + id, _ => {
-        self.keyPressed = null
+        if (keyCodes.indexOf(d3.event.keyCode) > -1) {
+          self.keyPressed = null
+          self.updateZoom()
+        }
       })
   }
 
