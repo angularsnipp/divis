@@ -436,10 +436,28 @@ export class ScatterChart {
   updateZoom(){
     const self = this
 
-    self.zoom = d3.behavior.zoom()
-      .x(self.x)
-      .y(self.y)
-      .on('zoom', self.zoomed.bind(self))
+    switch (self.keyPressed) {
+
+      // H, horizontal zoom
+      case 72:
+        self.zoom = d3.behavior.zoom()
+          .x(self.x)
+          .on('zoom', self.zoomed.bind(self))
+        break
+
+      // V, vertical zoom
+      case 86:
+        self.zoom = d3.behavior.zoom()
+          .y(self.y)
+          .on('zoom', self.zoomed.bind(self))
+        break
+
+      default:
+        self.zoom = d3.behavior.zoom()
+          .x(self.x)
+          .y(self.y)
+          .on('zoom', self.zoomed.bind(self))
+    }
 
     self.xAxisZoom = d3.behavior.zoom()
       .x(self.x)
