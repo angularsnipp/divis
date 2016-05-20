@@ -402,6 +402,7 @@ export class ScatterChart {
         return group.color || colors[group.id]
       })
       .style('fill-opacity', .2)
+      .attr('pointer-events', 'none')
 
     voronoiPath.order()
 
