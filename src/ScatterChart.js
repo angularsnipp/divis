@@ -390,9 +390,9 @@ export class ScatterChart {
     let { voronoiPath } = this
 
     // update voronoi
-    voronoiPath = voronoiPath.data(voronoi(data), polygon)
+    this.g.select('.voronoi').selectAll('path').remove()
 
-    voronoiPath.exit().remove()
+    voronoiPath = voronoiPath.data(voronoi(data), polygon)
 
     voronoiPath.enter().append('path')
       .attr('d', polygon)
@@ -404,6 +404,8 @@ export class ScatterChart {
       .style('fill-opacity', .2)
 
     voronoiPath.order()
+
+    voronoiPath.exit().remove()
   }
 
   update() {
