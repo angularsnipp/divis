@@ -1,5 +1,6 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
+import { polygon } from './utils'
 
 /**
  * Default config
@@ -22,6 +23,7 @@ const defaults = {
     }
   },
   colors: d3.scale.category20().range().slice(10),
+  useVoronoi: false,
   legend: {
     align: 'left',
     x: 0,
@@ -140,7 +142,8 @@ export class ScatterChart {
       yVariable,
       groupVariable,
       colors,
-      legend
+      legend,
+      useVoronoi
       } = options
 
     // x-scale
@@ -184,6 +187,11 @@ export class ScatterChart {
     // define dragged and selected point
     this.dragged = this.selected = null
 
+    // Voronoi diagram
+    this.voronoi = d3.geom.voronoi()
+      .x((d, i) => self.x(variables[xVariable].accessor(d, i)))
+      .y((d, i) => self.y(variables[yVariable].accessor(d, i)))
+      .clipExtent([[0, 0], [w, h]])
 
     // SVG
     this.svg = d3.select(target).append('svg')
@@ -235,6 +243,15 @@ export class ScatterChart {
       .attr('width', w)
       .attr('height', h)
       .attr('pointer-events', 'all')
+
+    // Voronoi diagram
+    if (useVoronoi) {
+      this.voronoiPath = this.g.append('g')
+        .attr('class', 'voronoi')
+        .selectAll("path")
+
+      this.doVoronoi()
+    }
 
     // Dots
     this.dots = this.g.append('g')
@@ -367,10 +384,36 @@ export class ScatterChart {
     self.update()
   }
 
+  doVoronoi(){
+    const { data, voronoi } = this
+    const { variables, groupVariable } = this.options
+    let { voronoiPath } = this
+
+    // update voronoi
+    voronoiPath = voronoiPath.data(voronoi(data), polygon)
+
+    voronoiPath.exit().remove()
+
+    voronoiPath.enter().append('path')
+      .attr('d', polygon)
+      .style('fill', (d, i) => {
+        const groupName = variables[groupVariable].accessor(d.point, i)
+        const group = variables[groupVariable].values[groupName]
+        return group.color || colors[group.id]
+      })
+      .style('fill-opacity', .2)
+
+    voronoiPath.order()
+  }
+
   update() {
     const { dots, x, y, selected } = this
-    const { variables, xVariable, yVariable } = this.options
+    const { variables, xVariable, yVariable, useVoronoi } = this.options
 
+    // update voronoi diagram
+    if (useVoronoi) this.doVoronoi()
+
+    // update dots
     dots.selectAll('.dot')
       .classed('selected', d => d === selected )
       .attr('cx', (d, i) => x(variables[xVariable].accessor(d, i)))
