@@ -143,7 +143,8 @@ export class ScatterChart {
       groupVariable,
       colors,
       legend,
-      useVoronoi
+      useVoronoi,
+      panel
       } = options
 
     // x-scale
@@ -323,6 +324,32 @@ export class ScatterChart {
       .attr('class', 'divis reset')
       .text('Reset')
       .on('click', this.reset.bind(this))
+
+    // Panel
+    this.panel = d3.select(target).append('div')
+      .attr('class', 'divis panel')
+      .selectAll('.panel-item')
+      .data(panel)
+
+    this.panelLabels = this.panel.enter()
+      .append('div')
+      .attr('class', 'panel-item')
+      .append('label')
+
+    this.panelLabels.append('input')
+      .attr('type', 'checkbox')
+      .attr('checked', d => d.state ? 'checked' : null)
+      .attr('hidden', '')
+      .on('change', function(d) {
+        d.state = !d.state
+        d3.select(this).attr('checked', d.state ? 'checked' : null)
+      })
+
+    this.panelLabels.append('span')
+      .text(d => d.text)
+
+    this.panel.exit().remove()
+
 
     // Events
     d3.select(target)

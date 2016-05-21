@@ -5,12 +5,6 @@
   -ms-user-select: none;      /* IE 10+ */
   user-select: none;
 
-  &.reset {
-    position: absolute;
-    top: 2em;
-    right: 2em;
-  }
-
   .zoom-layer { fill: transparent; }
 
   ul {
@@ -80,6 +74,57 @@
     circle.selected:hover {
       fill: #ff7f0e;
       stroke: #ff7f0e;
+    }
+  }
+
+  &.reset {
+    position: absolute;
+    top: 2em;
+    right: 2em;
+  }
+
+  &.panel {
+    font: 12px Arial;
+    position: absolute;
+    top: 0em;
+    left: 3.3em;
+
+    .panel-item {
+      background-color:#EFEFEF;
+      border-right:1px solid #fff;
+      overflow:auto;
+      float:left;
+      cursor: pointer;
+
+      &:first-child {
+        border-radius:4px 0px 0px 4px;
+      }
+      &:last-child {
+        border-radius:0px 4px 4px 0px;
+        border-right: none;
+      }
+      &:hover {
+        background-color: rgba(239, 239, 239, 0.6);
+      }
+
+      label {
+        float:left;
+        width:5.0em;
+      }
+
+      label span {
+        text-align:center;
+        padding:3px 0px;
+        display:block;
+      }
+
+      input:checked + span {
+        background-color: rgba(0, 112, 167, 0.71);
+        color:#fff;
+      }
+      input:checked + span:hover {
+        background-color: rgba(0, 112, 167, 0.6);
+      }
     }
   }
 }
