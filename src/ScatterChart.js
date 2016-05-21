@@ -346,6 +346,9 @@ export class ScatterChart {
         .on('change', function(d) {
           d.state = !d.state
           d3.select(this).attr('checked', d.state ? 'checked' : null)
+
+          // callback
+          if (typeof d.callback === 'function') d.callback(self, this, d)
         })
 
       this.panelLabels.append('span')
