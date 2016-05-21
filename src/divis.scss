@@ -118,11 +118,11 @@
         display:block;
       }
 
-      input:checked + span {
+      input[checked="checked"] + span {
         background-color: rgba(0, 112, 167, 0.71);
         color:#fff;
       }
-      input:checked + span:hover {
+      input[checked="checked"] + span:hover {
         background-color: rgba(0, 112, 167, 0.6);
       }
     }
