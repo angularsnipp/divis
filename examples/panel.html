@@ -65,10 +65,10 @@
     },
     usePanel: true,
     panel: [
-      { type: 'switch', text: 'Edit', visible: true, state: true },
-      { type: 'switch', text: 'Zoom', visible: true, state: true },
-      { type: 'switch', text: 'Voronoi', visible: true, state: true },
-      { type: 'button', text: 'Reset', visible: true, state: false },
+      { type: 'checkbox', text: 'Edit', visible: true, state: true },
+      { type: 'checkbox', text: 'Zoom', visible: true, state: true },
+      { type: 'checkbox', text: 'Voronoi', visible: true, state: true },
+      { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset() } },
       { type: 'button', text: 'Dummy', visible: false, state: false }
     ]
   };

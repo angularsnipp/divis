@@ -340,13 +340,16 @@ export class ScatterChart {
         .append('label')
 
       this.panelLabels.append('input')
-        .attr('type', 'checkbox')
-        .attr('checked', d => d.state ? 'checked' : null)
+        .attr('type', d => d.type || 'checkbox')
+        .attr('checked', d => {
+          if (d.type == 'checkbox') return d.state ? 'checked' : null
+        })
         .attr('hidden', '')
-        .on('change', function(d) {
-          d.state = !d.state
-          d3.select(this).attr('checked', d.state ? 'checked' : null)
-
+        .on('click', function(d) {
+          if (d.type == 'checkbox') {
+            d.state = !d.state
+            d3.select(this).attr('checked', d.state ? 'checked' : null)
+          }
           // callback
           if (typeof d.callback === 'function') d.callback(self, this, d)
         })
