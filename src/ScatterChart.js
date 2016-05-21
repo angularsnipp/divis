@@ -332,7 +332,7 @@ export class ScatterChart {
       this.panel = d3.select(target).append('div')
         .attr('class', 'divis panel')
         .selectAll('.panel-item')
-        .data(panel)
+        .data(panel.filter(d => d.visible))
 
       this.panelLabels = this.panel.enter()
         .append('div')
