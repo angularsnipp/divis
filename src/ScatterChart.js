@@ -24,6 +24,7 @@ const defaults = {
   },
   colors: d3.scale.category20().range().slice(10),
   useVoronoi: false,
+  usePanel: false,
   legend: {
     align: 'left',
     x: 0,
@@ -144,6 +145,7 @@ export class ScatterChart {
       colors,
       legend,
       useVoronoi,
+      usePanel,
       panel
       } = options
 
@@ -326,30 +328,31 @@ export class ScatterChart {
       .on('click', this.reset.bind(this))
 
     // Panel
-    this.panel = d3.select(target).append('div')
-      .attr('class', 'divis panel')
-      .selectAll('.panel-item')
-      .data(panel)
+    if (usePanel) {
+      this.panel = d3.select(target).append('div')
+        .attr('class', 'divis panel')
+        .selectAll('.panel-item')
+        .data(panel)
 
-    this.panelLabels = this.panel.enter()
-      .append('div')
-      .attr('class', 'panel-item')
-      .append('label')
+      this.panelLabels = this.panel.enter()
+        .append('div')
+        .attr('class', 'panel-item')
+        .append('label')
 
-    this.panelLabels.append('input')
-      .attr('type', 'checkbox')
-      .attr('checked', d => d.state ? 'checked' : null)
-      .attr('hidden', '')
-      .on('change', function(d) {
-        d.state = !d.state
-        d3.select(this).attr('checked', d.state ? 'checked' : null)
-      })
+      this.panelLabels.append('input')
+        .attr('type', 'checkbox')
+        .attr('checked', d => d.state ? 'checked' : null)
+        .attr('hidden', '')
+        .on('change', function(d) {
+          d.state = !d.state
+          d3.select(this).attr('checked', d.state ? 'checked' : null)
+        })
 
-    this.panelLabels.append('span')
-      .text(d => d.text)
+      this.panelLabels.append('span')
+        .text(d => d.text)
 
-    this.panel.exit().remove()
-
+      this.panel.exit().remove()
+    }
 
     // Events
     d3.select(target)
