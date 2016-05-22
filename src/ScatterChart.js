@@ -146,6 +146,7 @@ export class ScatterChart {
       groupVariable,
       colors,
       legend,
+      useEdit,
       useZoom,
       useVoronoi,
       usePanel,
@@ -264,11 +265,13 @@ export class ScatterChart {
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
 
-    this.dots.selectAll('.dot')
+    let dot = this.dots.selectAll('.dot')
       .data(data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
+
+    dot
       .classed('selected', d => d === self.selected )
       .attr('cx', (d, i) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => self.y(variables[yVariable].accessor(d, i)))
@@ -283,10 +286,15 @@ export class ScatterChart {
         const group = variables[groupVariable].values[groupName]
         return group.color || colors[group.id]
       })
-      .style('cursor', 'move')
-      .on('click',  this.pointClick.bind(this))
-      .on('mousedown.drag',  this.pointDrag.bind(this))
-      .on('touchstart.drag', this.pointDrag.bind(this))
+
+      if (useEdit) {
+        dot
+          .style('cursor', 'pointer')
+          .on('click',  this.pointClick.bind(this))
+          .on('mousedown.drag',  this.pointDrag.bind(this))
+          .on('touchstart.drag', this.pointDrag.bind(this))
+      }
+
 
     // Legend
     // TODO: now translate is for horizontal legend
