@@ -53,7 +53,17 @@
         }
       }
     },
+    useEdit: true,
+    useZoom: true,
     useVoronoi: true,
+    usePanel: true,
+    panel: [
+      { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+      { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+      { type: 'checkbox', text: 'Voronoi', visible: true, option: 'useVoronoi' },
+      { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset() } },
+      { type: 'button', text: 'Dummy', visible: false, state: false }
+    ],
     legend: {
       align: 'left',
       x: 0,
@@ -62,15 +72,7 @@
       itemWidth: 75,
       gap: 5,
       isHorizontal: true
-    },
-    usePanel: true,
-    panel: [
-      { type: 'checkbox', text: 'Edit', visible: true, state: true },
-      { type: 'checkbox', text: 'Zoom', visible: true, state: true },
-      { type: 'checkbox', text: 'Voronoi', visible: true, state: true },
-      { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset() } },
-      { type: 'button', text: 'Dummy', visible: false, state: false }
-    ]
+    }
   };
 
   var scatterChart = new Divis.ScatterChart(scatterChartOptions, data);

@@ -23,6 +23,8 @@ const defaults = {
     }
   },
   colors: d3.scale.category20().range().slice(10),
+  useEdit: true,
+  useZoom: true,
   useVoronoi: false,
   usePanel: false,
   legend: {
@@ -342,13 +344,14 @@ export class ScatterChart {
       this.panelLabels.append('input')
         .attr('type', d => d.type || 'checkbox')
         .attr('checked', d => {
-          if (d.type == 'checkbox') return d.state ? 'checked' : null
+          if (d.type == 'checkbox') return self.options[d.option] ? 'checked' : null
         })
         .attr('hidden', '')
         .on('click', function(d) {
           if (d.type == 'checkbox') {
-            d.state = !d.state
-            d3.select(this).attr('checked', d.state ? 'checked' : null)
+            self.options[d.option] = !self.options[d.option]
+            d3.select(this).attr('checked', self.options[d.option] ? 'checked' : null)
+            self.render()
           }
           // callback
           if (typeof d.callback === 'function') d.callback(self, this, d)
