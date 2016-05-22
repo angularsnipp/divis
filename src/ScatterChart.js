@@ -146,6 +146,7 @@ export class ScatterChart {
       groupVariable,
       colors,
       legend,
+      useZoom,
       useVoronoi,
       usePanel,
       panel
@@ -214,7 +215,6 @@ export class ScatterChart {
       .attr('class', 'zoom-layer')
       .attr('width', w)
       .attr('height', h)
-      .call(this.zoom)
 
     // X Axis
     // x axis layer
@@ -223,7 +223,6 @@ export class ScatterChart {
       .attr('transform', `translate(0, ${h})`)
       .attr('width', w)
       .attr('height', 20)
-      .call(this.xAxisZoom)
 
     this.xAxisG = this.g.append('g')
       .attr('class', 'x axis')
@@ -236,10 +235,12 @@ export class ScatterChart {
       .attr('transform', `translate(-30,0)`)
       .attr('height', h)
       .attr('width', 30)
-      .call(this.yAxisZoom)
 
     this.yAxisG = this.g.append('g')
       .attr('class', 'y axis')
+
+    // Call Zoom Layer
+    if (useZoom) this.callZoomLayer()
 
     // Clip Path
     this.g.append('clipPath')
@@ -560,6 +561,11 @@ export class ScatterChart {
       .y(self.y)
       .on('zoom', self.zoomed.bind(self))
 
+    self.callZoomLayer()
+  }
+
+  callZoomLayer(){
+    const self = this
     self.zoomLayer.call(self.zoom)
     self.xAxisZoomLayer.call(self.xAxisZoom)
     self.yAxisZoomLayer.call(self.yAxisZoom)
