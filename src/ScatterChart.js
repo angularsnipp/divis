@@ -6,7 +6,7 @@ import { polygon } from './utils'
  * Default config
  */
 const defaults = {
-  margin: {top: 20, right: 20, bottom: 40, left: 40},
+  margin: {top: 23, right: 20, bottom: 40, left: 40},
   xVariable: 'x',
   yVariable: 'y',
   groupVariable: 'group',
@@ -26,7 +26,12 @@ const defaults = {
   useEdit: true,
   useZoom: true,
   useVoronoi: false,
-  usePanel: false,
+  usePanel: true,
+  panel: [
+    { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+    { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+    { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
+  ],
   legend: {
     align: 'left',
     x: 0,
