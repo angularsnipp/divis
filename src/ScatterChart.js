@@ -366,6 +366,8 @@ export class ScatterChart {
             self.render()
             self.x.domain(xDomain)
             self.y.domain(yDomain)
+            if (d.option !== 'useZoom' && useZoom) self.updateZoom()
+            if (d.option == 'useZoom' && self.options[d.option]) self.updateZoom()
             self.redraw()
           }
           // callback
