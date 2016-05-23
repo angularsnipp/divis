@@ -248,21 +248,27 @@ export class LineChart {
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
 
-    this.dots.selectAll('.dot')
+    let dot = this.dots.selectAll('.dot')
       .data(d => data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
+
+    dot
       .classed('selected', d => d === self.selected )
       .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d, i)))
       .attr('r', 5.0)
       .style('stroke', (d, i, s) => variables[yVariables[s]].color || colors[s])
       .style('fill', (d, i, s) => variables[yVariables[s]].color || colors[s])
-      .style('cursor', 'ns-resize')
-      .on('click',  this.pointClick.bind(this))
-      .on('mousedown.drag', this.pointDrag.bind(this))
-      .on('touchstart.drag', this.pointDrag.bind(this))
+
+    if (useEdit) {
+      dot.
+        style('cursor', 'pointer')
+        .on('click', this.pointClick.bind(this))
+        .on('mousedown.drag', this.pointDrag.bind(this))
+        .on('touchstart.drag', this.pointDrag.bind(this))
+    }
 
     this.dots.exit().remove()
 
