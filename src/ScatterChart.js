@@ -360,7 +360,14 @@ export class ScatterChart {
           if (d.type == 'checkbox') {
             self.options[d.option] = !self.options[d.option]
             d3.select(this).attr('checked', self.options[d.option] ? 'checked' : null)
+
+            // set current domain after render
+            const xDomain = self.x.domain()
+            const yDomain = self.y.domain()
             self.render()
+            self.x.domain(xDomain)
+            self.y.domain(yDomain)
+            self.redraw()
           }
           // callback
           if (typeof d.callback === 'function') d.callback(self, this, d)
@@ -390,16 +397,18 @@ export class ScatterChart {
 
     d3.select(element)
       .on('keydown.' + id, _ => {
+        const { useZoom } = self.options
         const keyCode = d3.event.keyCode
         if (keyCodes.indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
           self.keyPressed = keyCode
-          self.updateZoom()
+          if (useZoom) self.updateZoom()
         }
       })
       .on('keyup.' + id, _ => {
+        const { useZoom } = self.options
         if (keyCodes.indexOf(d3.event.keyCode) > -1) {
           self.keyPressed = null
-          self.updateZoom()
+          if (useZoom) self.updateZoom()
         }
       })
   }
