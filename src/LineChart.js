@@ -5,7 +5,7 @@ import { EVENTS } from './Events'
  * Default config
  */
 const defaults = {
-  margin: {top: 20, right: 20, bottom: 40, left: 40},
+  margin: {top: 23, right: 20, bottom: 40, left: 40},
   xVariable: 'x',
   yVariables: ['y'],
   variables: {
@@ -13,6 +13,14 @@ const defaults = {
     y: { name: 'Y', accessor: d => d.y }
   },
   colors: d3.scale.category20().range().slice(10),
+  useEdit: true,
+  useZoom: true,
+  usePanel: true,
+  panel: [
+    { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+    { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+    { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
+  ],
   legend: {
     align: 'left',
     x: 0,
@@ -113,7 +121,11 @@ export class LineChart {
       xVariable,
       yVariables,
       colors,
-      legend
+      legend,
+      useEdit,
+      useZoom,
+      usePanel,
+      panel
       } = options
 
     // x-scale
@@ -293,6 +305,47 @@ export class LineChart {
       .text('Reset')
       .on('click', this.reset.bind(this))
 
+    // Panel
+    if (usePanel) {
+      this.panel = d3.select(target).append('div')
+        .attr('class', 'divis panel')
+        .selectAll('.panel-item')
+        .data(panel.filter(d => d.visible))
+
+      this.panelLabels = this.panel.enter()
+        .append('div')
+        .attr('class', 'panel-item')
+        .append('label')
+
+      this.panelLabels.append('input')
+        .attr('type', d => d.type || 'checkbox')
+        .attr('checked', d => {
+          if (d.type == 'checkbox') return self.options[d.option] ? 'checked' : null
+        })
+        .attr('hidden', '')
+        .on('click', function(d) {
+          if (d.type == 'checkbox') {
+            self.options[d.option] = !self.options[d.option]
+            d3.select(this).attr('checked', self.options[d.option] ? 'checked' : null)
+
+            // set current domain after render
+            const xDomain = self.x.domain()
+            const yDomain = self.y.domain()
+            self.render()
+            self.x.domain(xDomain)
+            self.y.domain(yDomain)
+            self.redraw()
+          }
+          // callback
+          if (typeof d.callback === 'function') d.callback(self, this, d)
+        })
+
+      this.panelLabels.append('span')
+        .text(d => d.text)
+
+      this.panel.exit().remove()
+    }
+
     // Events
     d3.select(target)
       .on('click', this.chartClick.bind(this))
@@ -311,16 +364,18 @@ export class LineChart {
 
     d3.select(element)
       .on('keydown.' + id, _ => {
+        const { useZoom } = self.options
         const keyCode = d3.event.keyCode
         if (keyCodes.indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
           self.keyPressed = keyCode
-          self.updateZoom()
+          if (useZoom) self.updateZoom()
         }
       })
       .on('keyup.' + id, _ => {
+        const { useZoom } = self.options
         if (keyCodes.indexOf(d3.event.keyCode) > -1) {
           self.keyPressed = null
-          self.updateZoom()
+          if (useZoom) self.updateZoom()
         }
       })
   }
