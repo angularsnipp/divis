@@ -302,14 +302,8 @@ export class LineChart {
 
     items.exit().remove()
 
-    // Reset button
-    d3.select(target)
-      .style('position', 'relative')
-
-    d3.select(target).append('button')
-      .attr('class', 'divis reset')
-      .text('Reset')
-      .on('click', this.reset.bind(this))
+    // Set relative position for container
+    d3.select(target).style('position', 'relative')
 
     // Panel
     if (usePanel) {
