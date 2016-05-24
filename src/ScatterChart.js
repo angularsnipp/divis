@@ -279,7 +279,7 @@ export class ScatterChart {
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
 
-    let dot = this.dots.selectAll('.dot')
+    const dot = this.dots.selectAll('.dot')
       .data(data)
       .enter()
       .append('circle')
@@ -348,21 +348,21 @@ export class ScatterChart {
 
     // Panel
     if (usePanel) {
-      this.panelContainer = d3.select(target).append('div')
+      const _panelContainer = d3.select(target).append('div')
         .attr('class', 'divis panel-container')
 
       // panel
-      this.panel = this.panelContainer.append('div')
+      const _panel = _panelContainer.append('div')
         .attr('class', 'panel')
         .selectAll('.panel-item')
         .data(panel.filter(d => d.visible))
 
-      this.panelLabels = this.panel.enter()
+      const _panelLabels = _panel.enter()
         .append('div')
         .attr('class', 'panel-item')
         .append('label')
 
-      this.panelLabels.append('input')
+      _panelLabels.append('input')
         .attr('type', d => d.type || 'checkbox')
         .attr('checked', d => {
           if (d.type == 'checkbox') return self.options[d.option] ? 'checked' : null
@@ -387,35 +387,35 @@ export class ScatterChart {
           if (typeof d.callback === 'function') d.callback(self, this, d)
         })
 
-      this.panelLabels.append('span')
+      _panelLabels.append('span')
         .text(d => d.text)
 
-      this.panel.exit().remove()
+      _panel.exit().remove()
 
       // group panel
-      this.groupPanel = this.panelContainer.append('div')
+      const _groupPanel = _panelContainer.append('div')
         .attr('class', 'panel')
         .selectAll('.panel-item')
         .data(uniqueGroups)
 
-      const groupPanelLabels = this.groupPanel.enter()
+      const _groupPanelLabels = _groupPanel.enter()
         .append('div')
         .attr('class', 'panel-item')
         .append('label')
 
-      const inputs = groupPanelLabels.append('input')
+      const _inputs = _groupPanelLabels.append('input')
         .attr('type', 'checkbox')
         .attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
         .attr('hidden', '')
         .on('click', function(d, i) {
           groupPanel.selectedIndex = i
-          inputs.attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
+          _inputs.attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
         })
 
-      groupPanelLabels.append('span')
+      _groupPanelLabels.append('span')
         .text(d => d)
 
-      this.groupPanel.exit().remove()
+      _groupPanel.exit().remove()
     }
 
     // Events
