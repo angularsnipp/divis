@@ -307,17 +307,21 @@ export class LineChart {
 
     // Panel
     if (usePanel) {
-      this.panel = d3.select(target).append('div')
-        .attr('class', 'divis panel')
+      const _panelContainer = d3.select(target).append('div')
+        .attr('class', 'divis panel-container')
+
+      // panel
+      const _panel = _panelContainer.append('div')
+        .attr('class', 'panel')
         .selectAll('.panel-item')
         .data(panel.filter(d => d.visible))
 
-      this.panelLabels = this.panel.enter()
+      const _panelLabels = _panel.enter()
         .append('div')
         .attr('class', 'panel-item')
         .append('label')
 
-      this.panelLabels.append('input')
+      _panelLabels.append('input')
         .attr('type', d => d.type || 'checkbox')
         .attr('checked', d => {
           if (d.type == 'checkbox') return self.options[d.option] ? 'checked' : null
@@ -342,10 +346,10 @@ export class LineChart {
           if (typeof d.callback === 'function') d.callback(self, this, d)
         })
 
-      this.panelLabels.append('span')
+      _panelLabels.append('span')
         .text(d => d.text)
 
-      this.panel.exit().remove()
+      _panel.exit().remove()
     }
 
     // Events
