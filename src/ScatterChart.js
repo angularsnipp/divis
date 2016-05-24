@@ -554,7 +554,14 @@ export class ScatterChart {
       // dispatch POINT ADD event
       self.dispatch[EVENTS.POINT.ADD](pointToAdd, index)
 
+      // set current domain after render
+      const xDomain = self.x.domain()
+      const yDomain = self.y.domain()
       self.render()
+      self.x.domain(xDomain)
+      self.y.domain(yDomain)
+      if (self.options.useZoom) self.updateZoom()
+      self.redraw()
     }
   }
 
