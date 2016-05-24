@@ -25,6 +25,7 @@ const defaults = {
   colors: d3.scale.category20().range().slice(10),
   useEdit: true,
   useZoom: true,
+  useAdd: false,
   useVoronoi: false,
   usePanel: true,
   panel: [
@@ -32,6 +33,9 @@ const defaults = {
     { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
     { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
   ],
+  groupPanel: {
+    selectedIndex: 0
+  },
   legend: {
     align: 'left',
     x: 0,
@@ -155,7 +159,8 @@ export class ScatterChart {
       useZoom,
       useVoronoi,
       usePanel,
-      panel
+      panel,
+      groupPanel
       } = options
 
     // x-scale
@@ -339,8 +344,12 @@ export class ScatterChart {
 
     // Panel
     if (usePanel) {
-      this.panel = d3.select(target).append('div')
-        .attr('class', 'divis panel')
+      this.panelContainer = d3.select(target).append('div')
+        .attr('class', 'divis panel-container')
+
+      // panel
+      this.panel = this.panelContainer.append('div')
+        .attr('class', 'panel')
         .selectAll('.panel-item')
         .data(panel.filter(d => d.visible))
 
@@ -378,6 +387,31 @@ export class ScatterChart {
         .text(d => d.text)
 
       this.panel.exit().remove()
+
+      // group panel
+      this.groupPanel = this.panelContainer.append('div')
+        .attr('class', 'panel')
+        .selectAll('.panel-item')
+        .data(uniqueGroups)
+
+      const groupPanelLabels = this.groupPanel.enter()
+        .append('div')
+        .attr('class', 'panel-item')
+        .append('label')
+
+      const inputs = groupPanelLabels.append('input')
+        .attr('type', 'checkbox')
+        .attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
+        .attr('hidden', '')
+        .on('click', function(d, i) {
+          groupPanel.selectedIndex = i
+          inputs.attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
+        })
+
+      groupPanelLabels.append('span')
+        .text(d => d)
+
+      this.groupPanel.exit().remove()
     }
 
     // Events
@@ -389,6 +423,7 @@ export class ScatterChart {
       .on('touchmove.drag', this.mousemove.bind(this))
       .on('mouseup.drag',   this.mouseup.bind(this))
       .on('touchend.drag',  this.mouseup.bind(this))
+      .on('click',  this.gClick.bind(this))
   }
 
   initGlobalEvents(element = window){
@@ -489,6 +524,23 @@ export class ScatterChart {
   chartClick() {
     this.selected = this.dragged = null
     this.update()
+  }
+
+  gClick(){
+    const { variables, xVariable, yVariable, groupVariable, useAdd, groupPanel } = this.options
+    const self = this, p = d3.mouse(self.g[0][0])
+
+    if (useAdd) {
+      const groups = Object.keys(variables[groupVariable].values)
+
+      let pointToAdd = {}
+      pointToAdd[xVariable] = self.x.invert(Math.max(0, Math.min(self.options.w, p[0])))
+      pointToAdd[yVariable] = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
+      pointToAdd[groupVariable] = groups[groupPanel.selectedIndex]
+
+      self.addPoint(pointToAdd)
+      self.render()
+    }
   }
 
   pointDrag(d, i) {
@@ -612,5 +664,10 @@ export class ScatterChart {
     this.calculateSize()
     this.calculateLimits()
     this.render()
+  }
+
+  // data manipulation
+  addPoint(point){
+    this.data.push(point)
   }
 }
