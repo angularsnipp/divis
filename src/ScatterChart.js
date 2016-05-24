@@ -54,7 +54,11 @@ export class ScatterChart {
 
   constructor(options = {}, data = []){
     this.options = {}
-    this.dispatch = d3.dispatch(EVENTS.POINT.DRAG, EVENTS.POINT.CLICK)
+    this.dispatch = d3.dispatch(
+      EVENTS.POINT.CLICK,
+      EVENTS.POINT.DRAG,
+      EVENTS.POINT.ADD
+    )
 
     this.setOptions(options)
     this.setData(data)
@@ -538,7 +542,11 @@ export class ScatterChart {
       pointToAdd[yVariable] = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
       pointToAdd[groupVariable] = groups[groupPanel.selectedIndex]
 
-      self.addPoint(pointToAdd)
+      const index = self.addPoint(pointToAdd)
+
+      // dispatch POINT ADD event
+      self.dispatch[EVENTS.POINT.ADD](pointToAdd, index)
+
       self.render()
     }
   }
@@ -669,5 +677,8 @@ export class ScatterChart {
   // data manipulation
   addPoint(point){
     this.data.push(point)
+
+    // return last index
+    return this.data.length - 1
   }
 }

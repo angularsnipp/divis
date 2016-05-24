@@ -3,7 +3,8 @@
  */
 export const EVENTS = {
   POINT: {
+    CLICK: 'POINT_CLICK',
     DRAG: 'POINT_DRAG',
-    CLICK: 'POINT_CLICK'
+    ADD: 'POINT_ADD'
   }
 }
