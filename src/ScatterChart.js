@@ -161,6 +161,7 @@ export class ScatterChart {
       legend,
       useEdit,
       useZoom,
+      useAdd,
       useVoronoi,
       usePanel,
       panel,
@@ -393,29 +394,35 @@ export class ScatterChart {
       _panel.exit().remove()
 
       // group panel
-      const _groupPanel = _panelContainer.append('div')
-        .attr('class', 'panel')
-        .selectAll('.panel-item')
-        .data(uniqueGroups)
+      if (useAdd) {
+        const _groupPanel = _panelContainer.append('div')
+          .attr('class', 'group-panel')
+          .selectAll('.panel-item')
+          .data(uniqueGroups)
 
-      const _groupPanelLabels = _groupPanel.enter()
-        .append('div')
-        .attr('class', 'panel-item')
-        .append('label')
+        const _groupPanelLabels = _groupPanel.enter()
+          .append('div')
+          .attr('class', 'panel-item')
+          .append('label')
 
-      const _inputs = _groupPanelLabels.append('input')
-        .attr('type', 'checkbox')
-        .attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
-        .attr('hidden', '')
-        .on('click', function(d, i) {
-          groupPanel.selectedIndex = i
-          _inputs.attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
-        })
+        const _inputs = _groupPanelLabels.append('input')
+          .attr('type', 'checkbox')
+          .attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
+          .attr('hidden', '')
+          .on('click', function(d, i) {
+            groupPanel.selectedIndex = i
+            _inputs.attr('checked', (d, i) => i === groupPanel.selectedIndex ? 'checked' : null)
+          })
 
-      _groupPanelLabels.append('span')
-        .text(d => d)
+        _groupPanelLabels.append('span')
+          .style('background-color', groupName => {
+            const group = variables[groupVariable].values[groupName]
+            return group.color || colors[group.id]
+          })
+          .text(d => d)
 
-      _groupPanel.exit().remove()
+        _groupPanel.exit().remove()
+      }
     }
 
     // Events

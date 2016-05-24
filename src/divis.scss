@@ -5,6 +5,12 @@
   -ms-user-select: none;      /* IE 10+ */
   user-select: none;
 
+  /*
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+  */
+
   .zoom-layer { fill: transparent; }
 
   ul {
@@ -82,15 +88,15 @@
     top: 0em;
     left: 3.3em;
 
-    .panel {
+    .panel, .group-panel {
       float:left;
       margin-right: 1em;
 
       .panel-item {
         background-color:#EFEFEF;
-        border-right:1px solid #fff;
         overflow:auto;
         float:left;
+        padding: 1px;
         cursor: pointer;
 
         &:first-child {
@@ -121,6 +127,20 @@
         }
         input[checked="checked"] + span:hover {
           background-color: rgba(0, 112, 167, 0.6);
+        }
+      }
+    }
+
+    .group-panel {
+      .panel-item {
+        input + span {
+          opacity: .6;
+          color:#fff;
+        }
+        input[checked="checked"] + span {
+          opacity: 1;
+          border: 1px solid #7d7d7d;
+          margin-top: -1px;
         }
       }
     }
