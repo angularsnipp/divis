@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Divis Scatter Chart with Adding Points</title>
+  <title>Divis Scatter Chart with Adding/Removing Points</title>
   <link rel="stylesheet" href="../build/divis.css"/>
   <link rel="stylesheet" href="./styles.css"/>
 </head>
@@ -14,7 +14,7 @@
 <div class="grid border">
 
   <div class="grid-cell c70">
-    <h3>Add Points in Scatter Chart</h3>
+    <h3>Add/Remove Points in Scatter Chart</h3>
     <div id="scatterChart" class="grid-cell zero-padding"></div>
   </div>
 
@@ -54,14 +54,16 @@
       }
     },
     useEdit: false,
-    useVoronoi: true,
     useZoom: true,
     useAdd: false,
+    useRemove: false,
+    useVoronoi: true,
     usePanel: true,
     panel: [
       { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
       { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
       { type: 'checkbox', text: 'Add', visible: true, option: 'useAdd' },
+      { type: 'checkbox', text: 'Remove', visible: true, option: 'useRemove' },
       { type: 'checkbox', text: 'Voronoi', visible: true, option: 'useVoronoi' },
       { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset(); }}
     ],
@@ -87,6 +89,9 @@
   });
   scatterChart.dispatch.on(Divis.EVENTS.POINT.ADD, function(d, i){
     logEvent('chartLog', { event: Divis.EVENTS.POINT.ADD, d: d, i: i });
+  });
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.REMOVE, function(d, i){
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.REMOVE, d: d, i: i });
   });
 
   // Resizing
