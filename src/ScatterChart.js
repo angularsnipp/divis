@@ -211,8 +211,8 @@ export class ScatterChart {
       .y(this.y)
       .on('zoom', this.zoomed.bind(this))
 
-    // define dragged and selected point
-    this.dragged = this.selected = null
+    // define dragged point
+    this.dragged = null
 
     // Voronoi diagram
     this.voronoi = d3.geom.voronoi()
@@ -232,6 +232,7 @@ export class ScatterChart {
       .x(self.x)
       .y(self.y)
       .on('brush', this.brushed.bind(this))
+      .on('brushend', this.brushended.bind(this))
 
     // SVG
     this.svg = d3.select(target).append('svg')
@@ -305,7 +306,7 @@ export class ScatterChart {
       .attr('class', 'dot')
 
     dot
-      .classed('selected', d => d === self.selected )
+      .classed('selected', d => d.selected )
       .attr('cx', (d, i) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => self.y(variables[yVariable].accessor(d, i)))
       .attr('r', 5.0)
@@ -539,7 +540,7 @@ export class ScatterChart {
   }
 
   update() {
-    const { dots, x, y, selected } = this
+    const { dots, x, y } = this
     const { variables, xVariable, yVariable, useVoronoi } = this.options
 
     // update voronoi diagram
@@ -547,7 +548,7 @@ export class ScatterChart {
 
     // update dots
     dots.selectAll('.dot')
-      .classed('selected', d => d === selected )
+      .classed('selected', d => d.selected )
       .attr('cx', (d, i) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => y(variables[yVariable].accessor(d, i)))
 
@@ -558,7 +559,7 @@ export class ScatterChart {
   }
 
   chartClick() {
-    this.selected = this.dragged = null
+    this.dragged = null
     this.update()
   }
 
@@ -598,7 +599,8 @@ export class ScatterChart {
       d3.event.stopPropagation()
     }
 
-    self.selected = self.dragged = d
+    d.selected = true
+    self.dragged = d
     self.pointIndex = i
     self.update()
   }
@@ -719,6 +721,10 @@ export class ScatterChart {
     dot.each(d => d.selected = false)
     quadTreeSearch(quadTree, extent, xAccessor, yAccessor);
     dot.classed('selected', d => d.selected)
+  }
+
+  brushended(){
+    // todo: add array of indices with selected points
   }
 
   reset(){
