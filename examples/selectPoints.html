@@ -85,6 +85,9 @@
   scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     logEvent('chartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i });
   });
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.SELECT, function(d, i){
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.SELECT, d: d, i: i });
+  });
 
   // Resizing
   onResizeHandler(function(){
