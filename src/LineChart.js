@@ -415,7 +415,7 @@ export class LineChart {
   }
 
   update() {
-    const { data, line, lines, dots, x, y, selected } = this
+    const { data, line, lines, dots, x, y, selected, seriesIndex } = this
     const { variables, xVariable, yVariables } = this.options
 
     lines.attr('d', v => {
@@ -423,7 +423,7 @@ export class LineChart {
     })
 
     dots.selectAll('.dot')
-      .classed('selected', d => d === selected )
+      .classed('selected', (d, i, s) => d === selected && s === seriesIndex )
       .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
 
