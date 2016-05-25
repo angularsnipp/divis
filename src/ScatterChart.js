@@ -60,7 +60,8 @@ export class ScatterChart {
       EVENTS.POINT.CLICK,
       EVENTS.POINT.DRAG,
       EVENTS.POINT.ADD,
-      EVENTS.POINT.REMOVE
+      EVENTS.POINT.REMOVE,
+      EVENTS.POINT.SELECT
     )
 
     this.setOptions(options)
@@ -725,6 +726,17 @@ export class ScatterChart {
     dot.each(d => d.selected = false)
     quadTreeSearch(quadTree, extent, xAccessor, yAccessor);
     dot.classed('selected', d => d.selected)
+
+    let points = [], indices = []
+    this.data.forEach((d, i) => {
+      if (d.selected) {
+        points.push(d)
+        indices.push(i)
+      }
+    })
+
+    // dispatch POINT SELECT event
+    this.dispatch[EVENTS.POINT.SELECT](points, indices)
   }
 
   brushended(){
