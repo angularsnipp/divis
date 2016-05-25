@@ -26,6 +26,7 @@ const defaults = {
   useEdit: true,
   useZoom: true,
   useAdd: false,
+  useRemove: false,
   useVoronoi: false,
   usePanel: true,
   panel: [
@@ -57,7 +58,8 @@ export class ScatterChart {
     this.dispatch = d3.dispatch(
       EVENTS.POINT.CLICK,
       EVENTS.POINT.DRAG,
-      EVENTS.POINT.ADD
+      EVENTS.POINT.ADD,
+      EVENTS.POINT.REMOVE
     )
 
     this.setOptions(options)
@@ -162,6 +164,7 @@ export class ScatterChart {
       useEdit,
       useZoom,
       useAdd,
+      useRemove,
       useVoronoi,
       usePanel,
       panel,
@@ -301,15 +304,14 @@ export class ScatterChart {
         const group = variables[groupVariable].values[groupName]
         return group.color || colors[group.id]
       })
+      .style('cursor', 'pointer')
+      .on('click',  this.pointClick.bind(this))
 
       if (useEdit) {
         dot
-          .style('cursor', 'pointer')
-          .on('click',  this.pointClick.bind(this))
           .on('mousedown.drag',  this.pointDrag.bind(this))
           .on('touchstart.drag', this.pointDrag.bind(this))
       }
-
 
     // Legend
     // TODO: now translate is for horizontal legend
@@ -579,7 +581,27 @@ export class ScatterChart {
   }
 
   pointClick(d, i){
-    this.dispatch[EVENTS.POINT.CLICK](d, i)
+    const { useRemove } = this.options
+    const self = this
+
+    // dispatch POINT CLICK event
+    self.dispatch[EVENTS.POINT.CLICK](d, i)
+
+    if (useRemove) {
+      // dispatch POINT REMOVE
+      self.dispatch[EVENTS.POINT.REMOVE](d, i)
+      self.removePoint(i)
+
+      // set current domain after render
+      const xDomain = self.x.domain()
+      const yDomain = self.y.domain()
+      self.render()
+      self.x.domain(xDomain)
+      self.y.domain(yDomain)
+      if (self.options.useZoom) self.updateZoom()
+      self.redraw()
+    }
+
     d3.event.preventDefault()
     d3.event.stopPropagation()
   }
@@ -694,5 +716,9 @@ export class ScatterChart {
 
     // return last index
     return this.data.length - 1
+  }
+
+  removePoint(index){
+    this.data.splice(index, 1)
   }
 }

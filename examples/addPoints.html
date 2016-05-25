@@ -53,16 +53,16 @@
         }
       }
     },
-    useEdit: true,
+    useEdit: false,
     useVoronoi: true,
-    useZoom: false,
-    useAdd: true,
+    useZoom: true,
+    useAdd: false,
     usePanel: true,
     panel: [
       { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
       { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
-      { type: 'checkbox', text: 'Voronoi', visible: true, option: 'useVoronoi' },
       { type: 'checkbox', text: 'Add', visible: true, option: 'useAdd' },
+      { type: 'checkbox', text: 'Voronoi', visible: true, option: 'useVoronoi' },
       { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset(); }}
     ],
     legend: {
@@ -79,6 +79,9 @@
   var scatterChart = new Divis.ScatterChart(scatterChartOptions, data);
   scatterChart.render();
 
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i });
+  });
   scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     logEvent('chartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i });
   });
