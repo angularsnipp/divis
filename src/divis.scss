@@ -59,27 +59,23 @@
   }
 
   .dots {
-    circle {
+    .dot {
       stroke: steelblue;
       stroke-width: 2px;
       fill: steelblue;
       fill-opacity: 0.4;
     }
 
-    circle.selected {
-      fill: #ff7f0e;
-      stroke: #ff7f0e;
+    .dot.selected {
+      stroke: #000 !important;
+      fill-opacity: 1 !important;
     }
+  }
 
-    circle:hover {
-      fill: #ff7f0e;
-      stroke: #707f0e;
-    }
-
-    circle.selected:hover {
-      fill: #ff7f0e;
-      stroke: #ff7f0e;
-    }
+  .brush .extent {
+    stroke: #fff;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
   }
 
   &.panel-container {

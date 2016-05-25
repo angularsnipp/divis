@@ -1,6 +1,6 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
-import { polygon } from './utils'
+import { polygon, quadTreeSearch } from './utils'
 
 /**
  * Default config
@@ -25,6 +25,7 @@ const defaults = {
   colors: d3.scale.category20().range().slice(10),
   useEdit: true,
   useZoom: true,
+  useSelect: false,
   useAdd: false,
   useRemove: false,
   useVoronoi: false,
@@ -163,6 +164,7 @@ export class ScatterChart {
       legend,
       useEdit,
       useZoom,
+      useSelect,
       useAdd,
       useRemove,
       useVoronoi,
@@ -217,6 +219,19 @@ export class ScatterChart {
       .x((d, i) => self.x(variables[xVariable].accessor(d, i)))
       .y((d, i) => self.y(variables[yVariable].accessor(d, i)))
       .clipExtent([[0, 0], [w, h]])
+
+    // Quad Tree
+    this.quadTree = d3.geom.quadtree()
+      .x(variables[xVariable].accessor)
+      .y(variables[yVariable].accessor)
+      .extent([[-1, -1], [w + 1, h + 1]])
+      (data)
+
+    // Brush
+    this.brush = d3.svg.brush()
+      .x(self.x)
+      .y(self.y)
+      .on('brush', this.brushed.bind(this))
 
     // SVG
     this.svg = d3.select(target).append('svg')
@@ -312,6 +327,14 @@ export class ScatterChart {
           .on('mousedown.drag',  this.pointDrag.bind(this))
           .on('touchstart.drag', this.pointDrag.bind(this))
       }
+
+    // add brush to dots
+    if (useSelect) {
+      this.dots.append('g')
+        .attr('class', 'brush')
+        .call(this.brush)
+        .call(this.brush.event)
+    }
 
     // Legend
     // TODO: now translate is for horizontal legend
@@ -683,6 +706,19 @@ export class ScatterChart {
     self.zoomLayer.call(self.zoom)
     self.xAxisZoomLayer.call(self.xAxisZoom)
     self.yAxisZoomLayer.call(self.yAxisZoom)
+  }
+
+  brushed(){
+    const { quadTree, brush, dots } = this
+    const { variables, xVariable, yVariable } = this.options
+    const extent = brush.extent()
+    const xAccessor = variables[xVariable].accessor
+    const yAccessor = variables[yVariable].accessor
+    const dot = dots.selectAll('.dot')
+
+    dot.each(d => d.selected = false)
+    quadTreeSearch(quadTree, extent, xAccessor, yAccessor);
+    dot.classed('selected', d => d.selected)
   }
 
   reset(){
