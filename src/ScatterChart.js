@@ -559,6 +559,10 @@ export class ScatterChart {
   }
 
   chartClick() {
+    // clear selection if not useSelect mode
+    if (!this.options.useSelect) {
+      this.dots.selectAll('.dot').each(d => d.selected = false)
+    }
     this.dragged = null
     this.update()
   }
