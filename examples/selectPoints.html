@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Divis Scatter Chart with Selecting Points</title>
+  <link rel="stylesheet" href="../build/divis.css"/>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+
+<div class="examples">
+  <a href="index.html">Index</a>
+</div>
+
+<div class="grid border">
+
+  <div class="grid-cell c70">
+    <h3>Select Points in Scatter Chart</h3>
+    <div id="scatterChart" class="grid-cell zero-padding"></div>
+  </div>
+
+  <div class="grid-cell c30">
+    <div id="chartLog" class="log">
+      <div style="font-style: italic; text-decoration: underline;">LOG</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../node_modules/d3/d3.min.js"></script>
+<script src="../build/divis.js"></script>
+<script src="./script.js"></script>
+<script>
+
+  var groups = ['class 1', 'class 2', 'class 3'];
+  var data = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: groups[parseInt(3*Math.random())] } });
+
+  // SCATTER CHART
+  var scatterChartOptions = {
+    target: '#scatterChart',
+    height: 400,
+    margin: { top: 24, right: 30, bottom: 40, left: 40 },
+    groupVariable: 'group',
+    variables: {
+      x: { name: 'X', accessor: function(d){return d.x;} },
+      y: { name: 'Y', accessor: function(d){return d.y;}},
+      group: {
+        name: 'Group ytye',
+        accessor: function (d) { return d.group },
+        values: {
+          'class 1': {id: 0, color: 'lightcoral'},
+          'class 2': {id: 1, color: 'lightgreen'},
+          'class 3': {id: 2, color: 'lightblue'}
+        }
+      }
+    },
+    useEdit: true,
+    useZoom: false,
+    useSelect: true,
+    useVoronoi: true,
+    usePanel: true,
+    panel: [
+      { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+      { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+      { type: 'checkbox', text: 'Select', visible: true, option: 'useSelect' },
+      { type: 'checkbox', text: 'Voronoi', visible: true, option: 'useVoronoi' },
+      { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset(); }}
+    ],
+    legend: {
+      align: 'left',
+      x: 0,
+      y: 0,
+      itemHeight: 12,
+      itemWidth: 75,
+      gap: 5,
+      isHorizontal: true
+    }
+  };
+
+  var scatterChart = new Divis.ScatterChart(scatterChartOptions, data);
+  scatterChart.render();
+
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i });
+  });
+  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
+    logEvent('chartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i });
+  });
+
+  // Resizing
+  onResizeHandler(function(){
+    scatterChart.resize();
+  })
+
+</script>
+</body>
+</html>
