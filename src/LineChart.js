@@ -255,7 +255,7 @@ export class LineChart {
       .attr('class', 'dot')
 
     dot
-      .classed('selected', d => d === self.selected )
+      .classed('selected', (d, i, s) => d === self.selected && s === self.seriesIndex )
       .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d, i)))
       .attr('r', 5.0)
