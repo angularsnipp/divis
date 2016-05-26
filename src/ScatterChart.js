@@ -617,24 +617,37 @@ export class ScatterChart {
       d3.event.stopPropagation()
     }
 
-    d.selected = true
+    //d.selected = true
     self.dragged = d
     self.pointIndex = i
 
-    // add the current point to selected indices
-    if (self.selectedIndices.indexOf(i) === -1) self.selectedIndices.push(i)
+    //// add the current point to selected indices
+    //if (self.selectedIndices.indexOf(i) === -1) self.selectedIndices.push(i)
 
     self.update()
   }
 
   pointClick(d, i){
-    const { useRemove } = this.options
+    const { useEdit, useRemove } = this.options
     const self = this
 
-    // dispatch POINT CLICK event
-    self.dispatch[EVENTS.POINT.CLICK](d, i)
+    if (useEdit){
+      // dispatch POINT CLICK event
+      self.dispatch[EVENTS.POINT.CLICK](d, i)
 
-    if (useRemove) {
+      if (d.selected)
+        d.selected = false
+      else
+        d.selected = true
+
+      // add the current point to selected indices
+      const idx = self.selectedIndices.indexOf(i)
+      if (d.selected && idx === -1) self.selectedIndices.push(i)
+      if (!d.selected && idx > -1) self.selectedIndices.splice(idx, 1)
+
+      self.redraw()
+    }
+    else if (useRemove) {
       // dispatch POINT REMOVE
       self.dispatch[EVENTS.POINT.REMOVE](d, i)
       self.removePoint(i)
