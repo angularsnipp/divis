@@ -63,6 +63,9 @@ export class ScatterChart {
       EVENTS.POINT.REMOVE,
       EVENTS.POINT.SELECT
     )
+    // initialize array of selected point indices
+    this.selectedIndices = []
+    this.selectedIndicesExtra = []
 
     this.setOptions(options)
     this.setData(data)
@@ -331,9 +334,11 @@ export class ScatterChart {
       }
 
     // add brush to dots
+    this.brushG = dots.append('g')
+      .attr('class', 'brush')
+
     if (useSelect) {
-      dots.append('g')
-        .attr('class', 'brush')
+      this.brushG
         .call(this.brush)
         .call(this.brush.event)
     }
@@ -563,6 +568,9 @@ export class ScatterChart {
     // clear selection if not useSelect mode
     if (!this.options.useSelect) {
       this.dot.each(d => d.selected = false)
+
+      // reset selected indices
+      this.selectedIndices = []
     }
     this.dragged = null
     this.update()
@@ -607,6 +615,10 @@ export class ScatterChart {
     d.selected = true
     self.dragged = d
     self.pointIndex = i
+
+    // add the current point to selected indices
+    if (self.selectedIndices.indexOf(i) === -1) self.selectedIndices.push(i)
+
     self.update()
   }
 
@@ -716,32 +728,53 @@ export class ScatterChart {
   }
 
   brushed(){
-    const { quadTree, brush, dot } = this
+    const self = this
+    const { quadTree, brush, dot, data } = this
     const { variables, xVariable, yVariable } = this.options
     const extent = brush.extent()
     const xAccessor = variables[xVariable].accessor
     const yAccessor = variables[yVariable].accessor
 
-    let points = [], indices = []
+    // define selectedPoints
+    let selectedPoints = []
+
+    // reset selectedIndicesFromBrush
+    self.selectedIndicesExtra = []
 
     dot.each(d => d.selected = false)
 
     quadTreeSearch(quadTree, extent, xAccessor, yAccessor)
 
     dot.classed('selected', (d, i) => {
-      if (d.selected) {
-        points.push(d)
-        indices.push(i)
+      if (self.selectedIndices.indexOf(i) > -1) {
+        d.selected = true
       }
+      else if (d.selected) {
+        self.selectedIndicesExtra.push(i)
+      }
+
       return d.selected
     })
 
+    self.selectedIndices.forEach(i => selectedPoints.push(data[i]))
+    self.selectedIndicesExtra.forEach(i => selectedPoints.push(data[i]))
+
     // dispatch POINT SELECT event
-    this.dispatch[EVENTS.POINT.SELECT](points, indices)
+    this.dispatch[EVENTS.POINT.SELECT](selectedPoints, self.selectedIndices.concat(self.selectedIndicesExtra))
   }
 
   brushended(){
-    // todo: add array of indices with selected points
+    const { brush, brushG } = this
+
+    // update selected indices
+    this.selectedIndices = this.selectedIndices.concat(this.selectedIndicesExtra)
+
+    // clear extra selected indices
+    this.selectedIndicesExtra = []
+
+    // clear brush
+    brush.clear()
+    brushG.call(brush)
   }
 
   reset(){
