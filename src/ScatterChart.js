@@ -302,11 +302,18 @@ export class ScatterChart {
       this.doVoronoi()
     }
 
+    //
     // Dots
+    //
     const dots = this.g.append('g')
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
 
+    // define brush for dots
+    this.brushG = dots.append('g')
+      .attr('class', 'brush')
+
+    // define dot
     this.dot = dots.selectAll('.dot')
       .data(data)
       .enter()
@@ -337,10 +344,7 @@ export class ScatterChart {
           .on('touchstart.drag', this.pointDrag.bind(this))
       }
 
-    // add brush to dots
-    this.brushG = dots.append('g')
-      .attr('class', 'brush')
-
+    // call brush if useSelect mode
     if (useSelect) {
       this.brushG
         .call(this.brush)
@@ -628,10 +632,10 @@ export class ScatterChart {
   }
 
   pointClick(d, i){
-    const { useEdit, useRemove } = this.options
+    const { useSelect, useRemove } = this.options
     const self = this
 
-    if (useEdit){
+    if (useSelect){
       // dispatch POINT CLICK event
       self.dispatch[EVENTS.POINT.CLICK](d, i)
 
