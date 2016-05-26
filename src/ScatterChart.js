@@ -296,17 +296,17 @@ export class ScatterChart {
     }
 
     // Dots
-    this.dots = this.g.append('g')
+    const dots = this.g.append('g')
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
 
-    const dot = this.dots.selectAll('.dot')
+    this.dot = dots.selectAll('.dot')
       .data(data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
 
-    dot
+    this.dot
       .classed('selected', d => d.selected )
       .attr('cx', (d, i) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => self.y(variables[yVariable].accessor(d, i)))
@@ -325,14 +325,14 @@ export class ScatterChart {
       .on('click',  this.pointClick.bind(this))
 
       if (useEdit) {
-        dot
+        this.dot
           .on('mousedown.drag',  this.pointDrag.bind(this))
           .on('touchstart.drag', this.pointDrag.bind(this))
       }
 
     // add brush to dots
     if (useSelect) {
-      this.dots.append('g')
+      dots.append('g')
         .attr('class', 'brush')
         .call(this.brush)
         .call(this.brush.event)
@@ -541,14 +541,14 @@ export class ScatterChart {
   }
 
   update() {
-    const { dots, x, y } = this
+    const { dot, x, y } = this
     const { variables, xVariable, yVariable, useVoronoi } = this.options
 
     // update voronoi diagram
     if (useVoronoi) this.doVoronoi()
 
     // update dots
-    dots.selectAll('.dot')
+    dot
       .classed('selected', d => d.selected )
       .attr('cx', (d, i) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => y(variables[yVariable].accessor(d, i)))
@@ -562,7 +562,7 @@ export class ScatterChart {
   chartClick() {
     // clear selection if not useSelect mode
     if (!this.options.useSelect) {
-      this.dots.selectAll('.dot').each(d => d.selected = false)
+      this.dot.each(d => d.selected = false)
     }
     this.dragged = null
     this.update()
@@ -716,23 +716,24 @@ export class ScatterChart {
   }
 
   brushed(){
-    const { quadTree, brush, dots } = this
+    const { quadTree, brush, dot } = this
     const { variables, xVariable, yVariable } = this.options
     const extent = brush.extent()
     const xAccessor = variables[xVariable].accessor
     const yAccessor = variables[yVariable].accessor
-    const dot = dots.selectAll('.dot')
-
-    dot.each(d => d.selected = false)
-    quadTreeSearch(quadTree, extent, xAccessor, yAccessor);
-    dot.classed('selected', d => d.selected)
 
     let points = [], indices = []
-    this.data.forEach((d, i) => {
+
+    dot.each(d => d.selected = false)
+
+    quadTreeSearch(quadTree, extent, xAccessor, yAccessor)
+
+    dot.classed('selected', (d, i) => {
       if (d.selected) {
         points.push(d)
         indices.push(i)
       }
+      return d.selected
     })
 
     // dispatch POINT SELECT event
