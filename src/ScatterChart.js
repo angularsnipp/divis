@@ -621,12 +621,8 @@ export class ScatterChart {
       d3.event.stopPropagation()
     }
 
-    //d.selected = true
     self.dragged = d
     self.pointIndex = i
-
-    //// add the current point to selected indices
-    //if (self.selectedIndices.indexOf(i) === -1) self.selectedIndices.push(i)
 
     self.update()
   }
@@ -636,13 +632,7 @@ export class ScatterChart {
     const self = this
 
     if (useSelect){
-      // dispatch POINT CLICK event
-      self.dispatch[EVENTS.POINT.CLICK](d, i)
-
-      if (d.selected)
-        d.selected = false
-      else
-        d.selected = true
+      d.selected ? d.selected = false : d.selected = true
 
       // add the current point to selected indices
       const idx = self.selectedIndices.indexOf(i)
@@ -650,10 +640,18 @@ export class ScatterChart {
       if (!d.selected && idx > -1) self.selectedIndices.splice(idx, 1)
 
       self.redraw()
+
+      // dispatch POINT CLICK event
+      self.dispatch[EVENTS.POINT.CLICK](d, i)
+
+      // trigger POINT SELECT event
+      self.selectPointTrigger(self.selectedIndices)
     }
     else if (useRemove) {
       // dispatch POINT REMOVE
       self.dispatch[EVENTS.POINT.REMOVE](d, i)
+
+      // remove point
       self.removePoint(i)
 
       // set current domain after render
