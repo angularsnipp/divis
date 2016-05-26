@@ -510,6 +510,14 @@ export class ScatterChart {
     d3.select(target).selectAll('*').remove()
   }
 
+  clearSelection(){
+    // clear selection if not useSelect mode
+    this.dot.each(d => d.selected = false)
+
+    // reset selected indices
+    this.selectedIndices = []
+  }
+
   render(){
     this.clear()
     this.init()
@@ -771,9 +779,13 @@ export class ScatterChart {
   reset(){
     const self = this
 
+    // clear selection
+    self.clearSelection()
+
     // recalculate limits
     self.calculateLimits()
 
+    // reset zoom
     d3.transition().duration(750)
       .tween("zoom", _ => {
         const ix = d3.interpolate(self.x.domain(), [self.options.xMin, self.options.xMax])
