@@ -146,7 +146,7 @@ export class ScatterChart {
 
   init(){
     let self = this
-    const { options, data, uniqueGroups } = this
+    const { options, data, selectedIndices, uniqueGroups } = this
 
     const {
       id,
@@ -176,6 +176,10 @@ export class ScatterChart {
       panel,
       groupPanel
       } = options
+
+    // recalculate data with selections
+    data.forEach(d => d.selected = false)
+    selectedIndices.forEach(i => data[i].selected = true)
 
     // x-scale
     this.x = d3.scale.linear()
@@ -565,13 +569,6 @@ export class ScatterChart {
   }
 
   chartClick() {
-    // clear selection if not useSelect mode
-    if (!this.options.useSelect) {
-      this.dot.each(d => d.selected = false)
-
-      // reset selected indices
-      this.selectedIndices = []
-    }
     this.dragged = null
     this.update()
   }
@@ -729,14 +726,11 @@ export class ScatterChart {
 
   brushed(){
     const self = this
-    const { quadTree, brush, dot, data } = this
+    const { quadTree, brush, dot } = this
     const { variables, xVariable, yVariable } = this.options
     const extent = brush.extent()
     const xAccessor = variables[xVariable].accessor
     const yAccessor = variables[yVariable].accessor
-
-    // define selectedPoints
-    let selectedPoints = []
 
     // reset selectedIndicesFromBrush
     self.selectedIndicesExtra = []
@@ -756,11 +750,8 @@ export class ScatterChart {
       return d.selected
     })
 
-    self.selectedIndices.forEach(i => selectedPoints.push(data[i]))
-    self.selectedIndicesExtra.forEach(i => selectedPoints.push(data[i]))
-
-    // dispatch POINT SELECT event
-    this.dispatch[EVENTS.POINT.SELECT](selectedPoints, self.selectedIndices.concat(self.selectedIndicesExtra))
+    // trigger POINT SELECT event
+    this.selectPointTrigger(self.selectedIndices.concat(self.selectedIndicesExtra))
   }
 
   brushended(){
@@ -800,6 +791,18 @@ export class ScatterChart {
     this.calculateSize()
     this.calculateLimits()
     this.render()
+  }
+
+  selectPointTrigger(selectedIndices){
+    const data = this.data
+
+    // define selectedPoints
+    let selectedPoints = []
+
+    selectedIndices.forEach(i => selectedPoints.push(data[i]))
+
+    // dispatch POINT SELECT event
+    this.dispatch[EVENTS.POINT.SELECT](selectedPoints, selectedIndices)
   }
 
   // data manipulation
