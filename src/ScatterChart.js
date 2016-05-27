@@ -841,6 +841,15 @@ export class ScatterChart {
   }
 
   removePoint(index){
+    // remove from data
     this.data.splice(index, 1)
+
+    // accurately remove from selected indices
+    let newIndices = []
+    this.selectedIndices.forEach(i => {
+      if (i < index) newIndices.push(i)
+      if (i > index) newIndices.push(i - 1)
+    })
+    this.selectedIndices = newIndices
   }
 }
