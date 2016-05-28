@@ -1,5 +1,6 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
+import { ContextMenu } from './ContextMenu'
 import { polygon, quadTreeSearch } from './utils'
 
 /**
@@ -46,6 +47,14 @@ const defaults = {
     itemWidth: 50,
     gap: 5,
     isHorizontal: true
+  },
+  contextMenu: {
+    items: [
+      {
+        title: 'Delete',
+        action: function(elm, d, i, s) {}
+      }
+    ]
   }
 }
 
@@ -81,6 +90,9 @@ export class ScatterChart {
 
     // init global events
     this.initGlobalEvents()
+
+    // init context menu
+    this.contextMenu = new ContextMenu(this.options.contextMenu)
   }
 
   setOptions(_){
@@ -475,6 +487,7 @@ export class ScatterChart {
       .on('mouseup.drag',   this.mouseup.bind(this))
       .on('touchend.drag',  this.mouseup.bind(this))
       .on('click',  this.gClick.bind(this))
+      .on('contextmenu', this.contextMenu.render())
   }
 
   initGlobalEvents(element = window){
