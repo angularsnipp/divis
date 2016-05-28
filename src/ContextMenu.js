@@ -43,8 +43,8 @@ export class ContextMenu {
         .enter()
         .append('div')
         .attr('class', 'context-menu')
-        .style('left', (d3.event.pageX - 2) + 'px')
-        .style('top', (d3.event.pageY - 2) + 'px')
+        .style('left', (d3.event.pageX) + 'px')
+        .style('top', (d3.event.pageY) + 'px')
         .style('display', 'block')
         .append('ul')
 
