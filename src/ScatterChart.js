@@ -52,7 +52,10 @@ const defaults = {
     items: [
       {
         title: 'Delete',
-        action: function(elm, d, i, s) {}
+        action: function(chart, elm, d, i, s) {
+          chart.removeSelectedPoints()
+          chart.render()
+        }
       }
     ]
   }
@@ -487,7 +490,7 @@ export class ScatterChart {
       .on('mouseup.drag',   this.mouseup.bind(this))
       .on('touchend.drag',  this.mouseup.bind(this))
       .on('click',  this.gClick.bind(this))
-      .on('contextmenu', this.contextMenu.render())
+      .on('contextmenu', this.contextMenu.render(this))
   }
 
   initGlobalEvents(element = window){
@@ -864,5 +867,13 @@ export class ScatterChart {
       if (i > index) newIndices.push(i - 1)
     })
     this.selectedIndices = newIndices
+  }
+
+  removeSelectedPoints(){
+    this.selectedIndices.sort((a, b) => b - a)
+    this.selectedIndices.forEach(i => {
+      this.data.splice(i, 1)
+    })
+    this.selectedIndices = []
   }
 }

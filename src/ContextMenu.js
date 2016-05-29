@@ -27,7 +27,7 @@ export class ContextMenu {
     d3.select('body').on('click.context-menu', this.clear)
   }
 
-  render(){
+  render(chart){
     const self = this
     const { options } = this
 
@@ -55,7 +55,7 @@ export class ContextMenu {
         .html(d => typeof d.title === 'function' ? d.title(data, index, s) : d.title)
         .on('click', (d, i) => {
           if (d.disabled) return
-          if (d.action) d.action(elem, data, index, s)
+          if (d.action) d.action(chart, elem, data, index, s)
 
           //clear
           self.clear()
