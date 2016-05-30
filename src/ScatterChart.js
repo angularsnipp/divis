@@ -51,6 +51,13 @@ const defaults = {
   contextMenu: {
     items: [
       {
+        title: 'Clear Selection',
+        action: function(chart, elm, d, i, s) {
+          chart.clearSelection()
+          chart.render()
+        }
+      },
+      {
         title: 'Delete',
         action: function(chart, elm, d, i, s) {
           chart.removeSelectedPoints()
@@ -874,6 +881,10 @@ export class ScatterChart {
     this.selectedIndices.forEach(i => {
       this.data.splice(i, 1)
     })
+    this.selectedIndices = []
+  }
+
+  clearSelection(){
     this.selectedIndices = []
   }
 }
