@@ -437,14 +437,7 @@ export class ScatterChart {
             d3.select(this).attr('checked', self.options[d.option] ? 'checked' : null)
 
             // set current domain after render
-            const xDomain = self.x.domain()
-            const yDomain = self.y.domain()
-            self.render()
-            self.x.domain(xDomain)
-            self.y.domain(yDomain)
-            if (d.option !== 'useZoom' && useZoom) self.updateZoom()
-            if (d.option == 'useZoom' && self.options[d.option]) self.updateZoom()
-            self.redraw()
+            self.saveRender()
           }
           // callback
           if (typeof d.callback === 'function') d.callback(self, this, d)
@@ -551,6 +544,17 @@ export class ScatterChart {
     this.redraw()
   }
 
+  saveRender(){
+    // set current domain after render
+    const xDomain = this.x.domain()
+    const yDomain = this.y.domain()
+    this.render()
+    this.x.domain(xDomain)
+    this.y.domain(yDomain)
+    if (this.options.useZoom) this.updateZoom()
+    this.redraw()
+  }
+
   redraw() {
     const self = this
     self.xAxisG.call(self.xAxis)
@@ -626,13 +630,7 @@ export class ScatterChart {
       self.dispatch[EVENTS.POINT.ADD](pointToAdd, index)
 
       // set current domain after render
-      const xDomain = self.x.domain()
-      const yDomain = self.y.domain()
-      self.render()
-      self.x.domain(xDomain)
-      self.y.domain(yDomain)
-      if (self.options.useZoom) self.updateZoom()
-      self.redraw()
+      self.saveRender()
     }
   }
 
@@ -678,13 +676,7 @@ export class ScatterChart {
       self.removePoint(i)
 
       // set current domain after render
-      const xDomain = self.x.domain()
-      const yDomain = self.y.domain()
-      self.render()
-      self.x.domain(xDomain)
-      self.y.domain(yDomain)
-      if (self.options.useZoom) self.updateZoom()
-      self.redraw()
+      self.saveRender()
     }
 
     d3.event.preventDefault()
