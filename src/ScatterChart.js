@@ -54,14 +54,14 @@ const defaults = {
         title: 'Clear Selection',
         action: function(chart, elm, d, i, s) {
           chart.clearSelection()
-          chart.render()
+          chart.saveRender()
         }
       },
       {
         title: 'Delete',
         action: function(chart, elm, d, i, s) {
           chart.removeSelectedPoints()
-          chart.render()
+          chart.saveRender()
         }
       }
     ]
