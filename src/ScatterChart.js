@@ -82,10 +82,12 @@ export class ScatterChart {
       EVENTS.POINT.REMOVE,
       EVENTS.POINT.SELECT
     )
+
     // initialize array of selected point indices
     this.selectedIndices = []
     this.selectedIndicesExtra = []
 
+    // set initial options and data
     this.setOptions(options)
     this.setData(data)
 
@@ -105,6 +107,7 @@ export class ScatterChart {
     this.contextMenu = new ContextMenu(this.options.contextMenu)
   }
 
+  // Set chart options
   setOptions(_){
     // save initial options
     this._options = _
@@ -114,6 +117,7 @@ export class ScatterChart {
     return this
   }
 
+  // Set chart data
   setData(_){
     this.data = _
 
@@ -123,7 +127,7 @@ export class ScatterChart {
     return this
   }
 
-  // Set width and height
+  // Calculate width and height
   calculateSize(){
     const { width: staticWidth, height: staticHeight } = this._options
     let { options } = this
@@ -142,6 +146,7 @@ export class ScatterChart {
     options.h = height - margin.top - margin.bottom
   }
 
+  // Calculate min and max values based on data
   calculateLimits(){
     let { options } = this
     const { data } = this
@@ -153,6 +158,7 @@ export class ScatterChart {
     options.yMin = d3.min(data, variables[yVariable].accessor)
   }
 
+  // Find unique groups or classes for groupVariable
   getUniqueGroups(){
     const { variables, groupVariable } = this.options
     return Object.keys(variables[groupVariable].values)
@@ -166,6 +172,7 @@ export class ScatterChart {
     //return groups.sort()
   }
 
+  // Initialize graph
   init(){
     let self = this
     const { options, data, selectedIndices, uniqueGroups } = this
@@ -493,6 +500,7 @@ export class ScatterChart {
       .on('contextmenu', this.contextMenu.render(this))
   }
 
+  // Initialize global event listeners for keyboard, ...
   initGlobalEvents(element = window){
     const self = this
     const { id } = this.options
@@ -516,6 +524,7 @@ export class ScatterChart {
       })
   }
 
+  // Clear global event listeners
   clearGlobalEvents(element = window){
     const self = this
     const { id } = this.options
@@ -525,25 +534,20 @@ export class ScatterChart {
       .on('keyup.' + id, null)
   }
 
+  // Clear graph
   clear(){
     const { target } = this.options
     d3.select(target).selectAll('*').remove()
   }
 
-  clearSelection(){
-    // clear selection if not useSelect mode
-    this.dot.each(d => d.selected = false)
-
-    // reset selected indices
-    this.selectedIndices = []
-  }
-
+  // Completely recreate the graph
   render(){
     this.clear()
     this.init()
     this.redraw()
   }
 
+  // Render graph with zoom domains
   saveRender(){
     // set current domain after render
     const xDomain = this.x.domain()
@@ -555,6 +559,7 @@ export class ScatterChart {
     this.redraw()
   }
 
+  // Update data, axes, zooming
   redraw() {
     const self = this
     self.xAxisG.call(self.xAxis)
@@ -563,6 +568,7 @@ export class ScatterChart {
     self.update()
   }
 
+  // Create voronoi diagram
   doVoronoi(){
     const { data, voronoi } = this
     const { variables, groupVariable } = this.options
@@ -588,6 +594,7 @@ export class ScatterChart {
     voronoiPath.exit().remove()
   }
 
+  // Update graph with data
   update() {
     const { dot, x, y } = this
     const { variables, xVariable, yVariable, useVoronoi } = this.options
@@ -606,6 +613,10 @@ export class ScatterChart {
       d3.event.stopPropagation()
     }
   }
+
+  /*
+   * Event handlers
+   */
 
   chartClick() {
     this.dragged = null
@@ -877,6 +888,10 @@ export class ScatterChart {
   }
 
   clearSelection(){
+    // clear selection if not useSelect mode
+    this.dot.each(d => d.selected = false)
+
+    // reset selected indices
     this.selectedIndices = []
   }
 }
