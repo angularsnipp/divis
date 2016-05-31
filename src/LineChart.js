@@ -233,7 +233,9 @@ export class LineChart {
       .attr('class', 'line')
       .attr('clip-path', 'url(#clip)')
       .attr('d', v => {
-        return self.line.y((d, i) => self.y(variables[v].accessor(d, i)))(data)
+        return self.line
+          .defined((d, i) => !isNaN(self.y(variables[v].accessor(d, i))))
+          .y((d, i) => self.y(variables[v].accessor(d, i)))(data)
       })
       .style('stroke', (v, i) => variables[v].color || colors[i])
 
@@ -249,7 +251,7 @@ export class LineChart {
       .attr('clip-path', 'url(#clip)')
 
     let dot = this.dots.selectAll('.dot')
-      .data(d => data)
+      .data(d => data.filter((d, i) => !isNaN(self.y(variables[v].accessor(d, i)))))
       .enter()
       .append('circle')
       .attr('class', 'dot')
@@ -419,7 +421,9 @@ export class LineChart {
     const { variables, xVariable, yVariables } = this.options
 
     lines.attr('d', v => {
-      return line.y((d, i) => y(variables[v].accessor(d, i)))(data)
+      return line
+        .defined((d, i) => !isNaN(y(variables[v].accessor(d, i))))
+        .y((d, i) => y(variables[v].accessor(d, i)))(data)
     })
 
     dots.selectAll('.dot')
