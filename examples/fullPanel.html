@@ -126,6 +126,13 @@
       y5: Math.random() + 5
     }
   });
+  multiLineChartData.forEach(function(d){
+    var idx = parseInt(4.99 * Math.random()) + 1
+    if (Math.random() > .5) {
+      d['y' + idx] = null;
+    }
+    return d;
+  });
   var multiLineChartOptions = {
     target: '#multiLineChart',
     height: 400,
@@ -141,7 +148,7 @@
       y5: { name: 'Y5', accessor: function(d){ return d.y5 } }
     },
     useEdit: true,
-    useZoom: false,
+    useZoom: true,
     useSelect: false,
     useAdd: false,
     useRemove: false,

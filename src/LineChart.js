@@ -1,5 +1,6 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
+import { isDefined } from './utils'
 
 /**
  * Default config
@@ -234,7 +235,7 @@ export class LineChart {
       .attr('clip-path', 'url(#clip)')
       .attr('d', v => {
         return self.line
-          .defined((d, i) => !isNaN(self.y(variables[v].accessor(d, i))))
+          .defined((d, i) => isDefined(variables[v].accessor(d, i)))
           .y((d, i) => self.y(variables[v].accessor(d, i)))(data)
       })
       .style('stroke', (v, i) => variables[v].color || colors[i])
@@ -251,7 +252,7 @@ export class LineChart {
       .attr('clip-path', 'url(#clip)')
 
     let dot = this.dots.selectAll('.dot')
-      .data(d => data.filter((d, i) => !isNaN(self.y(variables[v].accessor(d, i)))))
+      .data(v => data.filter((d, i) => isDefined(variables[v].accessor(d, i))))
       .enter()
       .append('circle')
       .attr('class', 'dot')
@@ -422,7 +423,7 @@ export class LineChart {
 
     lines.attr('d', v => {
       return line
-        .defined((d, i) => !isNaN(y(variables[v].accessor(d, i))))
+        .defined((d, i) => isDefined(variables[v].accessor(d, i)))
         .y((d, i) => y(variables[v].accessor(d, i)))(data)
     })
 

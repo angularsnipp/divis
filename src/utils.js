@@ -26,3 +26,10 @@ export function quadTreeSearch(quadtree, extent, xAccessor, yAccessor) {
     return x1 > x3 || y1 > y3 || x2 < x0 || y2 < y0
   })
 }
+
+/**
+ * Define data to be available for charts
+ */
+export function isDefined(d) {
+  return d !== null && d !== undefined && d !== 'NaN' && d !== NaN
+}
