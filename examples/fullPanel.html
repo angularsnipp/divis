@@ -14,6 +14,21 @@
 <div class="grid border">
 
   <div class="grid-cell c70">
+    <h3>Multi Line Chart</h3>
+    <div id="multiLineChart"></div>
+  </div>
+
+  <div class="grid-cell c30">
+    <div id="multiLineChartLog" class="log">
+      <div style="font-style: italic; text-decoration: underline;">LOG</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="grid border">
+
+  <div class="grid-cell c70">
     <h3>Scatter Chart with Full Panel</h3>
     <div id="scatterChart" class="grid-cell zero-padding"></div>
   </div>
@@ -99,8 +114,71 @@
     logEvent('chartLog', { event: Divis.EVENTS.POINT.REMOVE, d: d, i: i });
   });
 
+
+  // MULTI LINE CHART
+  var multiLineChartData = generate(100, function(i){
+    return {
+      x: i,
+      y1: Math.random() + 1,
+      y2: Math.random() + 2,
+      y3: Math.random() + 3,
+      y4: Math.random() + 4,
+      y5: Math.random() + 5
+    }
+  });
+  var multiLineChartOptions = {
+    target: '#multiLineChart',
+    height: 400,
+    margin: { top: 23, right: 30, bottom: 40, left: 40 },
+    xVariable: 'x',
+    yVariables: ['y1', 'y2', 'y3', 'y4', 'y5'],
+    variables: {
+      x: { name: 'X', accessor: function(d){ return d.x } },
+      y1: { name: 'Y1', accessor: function(d){ return d.y1 } },
+      y2: { name: 'Y2', accessor: function(d){ return d.y2 } },
+      y3: { name: 'Y3', accessor: function(d){ return d.y3 } },
+      y4: { name: 'Y4', accessor: function(d){ return d.y4 } },
+      y5: { name: 'Y5', accessor: function(d){ return d.y5 } }
+    },
+    useEdit: true,
+    useZoom: false,
+    useSelect: false,
+    useAdd: false,
+    useRemove: false,
+    usePanel: true,
+    panel: [
+      { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+      { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+      { type: 'checkbox', text: 'Select', visible: true, option: 'useSelect' },
+      { type: 'checkbox', text: 'Add', visible: true, option: 'useAdd' },
+      { type: 'checkbox', text: 'Remove', visible: true, option: 'useRemove' },
+      { type: 'button', text: 'Reset', visible: true, callback: function(chart){ chart.reset(); }}
+    ],
+  };
+
+  var multiLineChart = new Divis.LineChart(multiLineChartOptions, multiLineChartData);
+  multiLineChart.render();
+
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i, s){
+    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
+  });
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
+    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i, s: s });
+  });
+//  multiLineChart.dispatch.on(Divis.EVENTS.POINT.SELECT, function(d, i, s){
+//    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.SELECT, d: d, i: i, s: s });
+//  });
+//  multiLineChart.dispatch.on(Divis.EVENTS.POINT.ADD, function(d, i, s){
+//    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.ADD, d: d, i: i, s: s });
+//  });
+//  multiLineChart.dispatch.on(Divis.EVENTS.POINT.REMOVE, function(d, i, s){
+//    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.REMOVE, d: d, i: i, s: s });
+//  });
+
+
   // Resizing
   onResizeHandler(function(){
+    multiLineChart.resize();
     scatterChart.resize();
   })
 
