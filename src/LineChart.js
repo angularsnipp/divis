@@ -270,7 +270,7 @@ export class LineChart {
       .attr('clip-path', 'url(#clip)')
 
     // define brush for dots
-    this.brushG = dots.append('g')
+    this.brushG = this.dots.append('g')
       .attr('class', 'brush')
 
     let dot = this.dots.selectAll('.dot')
