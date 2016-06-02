@@ -16,6 +16,7 @@ const defaults = {
   colors: d3.scale.category20().range().slice(10),
   useEdit: true,
   useZoom: true,
+  useSelect: false,
   usePanel: true,
   panel: [
     { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
@@ -41,6 +42,10 @@ export class LineChart {
   constructor(options = {}, data = []){
     this.options = {}
     this.dispatch = d3.dispatch(EVENTS.POINT.DRAG, EVENTS.POINT.CLICK)
+
+    // initialize array of selected point indices
+    this.selectedIndices = []
+    this.selectedIndicesExtra = []
 
     this.setOptions(options)
     this.setData(data)
@@ -104,7 +109,7 @@ export class LineChart {
 
   init(){
     let self = this
-    const { options, data } = this
+    const { options, data, selectedIndices } = this
 
     const {
       id,
@@ -125,9 +130,14 @@ export class LineChart {
       legend,
       useEdit,
       useZoom,
+      useSelect,
       usePanel,
       panel
       } = options
+
+    // recalculate data with selections
+    data.forEach(d => d.selected = false)
+    selectedIndices.forEach(i => data[i].selected = true)
 
     // x-scale
     this.x = d3.scale.linear()
@@ -173,6 +183,12 @@ export class LineChart {
     // define dragged and selected point
     this.dragged = this.selected = null
 
+    // Brush
+    this.brush = d3.svg.brush()
+      .x(self.x)
+      .y(self.y)
+      .on('brush', this.brushed.bind(this))
+      .on('brushend', this.brushended.bind(this))
 
     // SVG
     this.svg = d3.select(target).append('svg')
@@ -242,7 +258,9 @@ export class LineChart {
 
     this.lines.exit().remove()
 
+    //
     // Dots
+    //
     this.dots = this.g.selectAll('.dots')
       .data(yVariables)
 
@@ -250,6 +268,10 @@ export class LineChart {
       .append('g')
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
+
+    // define brush for dots
+    this.brushG = dots.append('g')
+      .attr('class', 'brush')
 
     let dot = this.dots.selectAll('.dot')
       .data(v => data.filter((d, i) => isDefined(variables[v].accessor(d, i))))
@@ -271,6 +293,13 @@ export class LineChart {
         .on('click', this.pointClick.bind(this))
         .on('mousedown.drag', this.pointDrag.bind(this))
         .on('touchstart.drag', this.pointDrag.bind(this))
+    }
+
+    // call brush if useSelect mode
+    if (useSelect) {
+      this.brushG
+        .call(this.brush)
+        .call(this.brush.event)
     }
 
     this.dots.exit().remove()
@@ -539,6 +568,22 @@ export class LineChart {
     self.zoomLayer.call(self.zoom)
     self.xAxisZoomLayer.call(self.xAxisZoom)
     self.yAxisZoomLayer.call(self.yAxisZoom)
+  }
+
+  brushed(){}
+
+  brushended(){
+    const { brush, brushG } = this
+
+    // update selected indices
+    this.selectedIndices = this.selectedIndices.concat(this.selectedIndicesExtra)
+
+    // clear extra selected indices
+    this.selectedIndicesExtra = []
+
+    // clear brush
+    brush.clear()
+    brushG.call(brush)
   }
 
   reset(){
