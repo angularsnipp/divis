@@ -504,23 +504,29 @@ export class ScatterChart {
   initGlobalEvents(element = window){
     const self = this
     const { id } = this.options
-    const zoomKeyCodes = [72, 86] // ['H', 'V']
-    const clearKeyCodes = [8, 46] // ['Backspace', 'Delete']
 
     d3.select(element)
       .on('keydown.' + id, _ => {
         const { useZoom } = self.options
         const keyCode = d3.event.keyCode
 
-        if (zoomKeyCodes.indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
+        // horizontal (H) or vertical (V) zooming
+        if ([72, 86].indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
           self.keyPressed = keyCode
           if (useZoom) self.updateZoom()
           return
         }
 
-        // remove selected points
-        if (clearKeyCodes.indexOf(keyCode) > -1 && self.selectedIndices.length) {
+        // remove selected points (Backspace / Delete)
+        if ([8, 46].indexOf(keyCode) > -1 && self.selectedIndices.length) {
           self.removeSelectedPoints()
+          self.saveRender()
+          return
+        }
+
+        // clear selection (Esc)
+        if (keyCode === 27 && self.selectedIndices.length) {
+          self.clearSelection()
           self.saveRender()
           return
         }
