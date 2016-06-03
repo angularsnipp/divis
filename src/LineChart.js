@@ -280,7 +280,7 @@ export class LineChart {
       .attr('class', 'dot')
 
     dot
-      .classed('selected', (d, i, s) => d === self.selected && s === self.seriesIndex )
+      .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s) > -1) //d === self.selected && s === self.seriesIndex )
       .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d, i)))
       .attr('r', 5.0)
@@ -457,7 +457,7 @@ export class LineChart {
     })
 
     dots.selectAll('.dot')
-      .classed('selected', (d, i, s) => d === selected && s === seriesIndex )
+      .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s))//d === selected && s === seriesIndex )
       .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
 
@@ -570,7 +570,21 @@ export class LineChart {
     self.yAxisZoomLayer.call(self.yAxisZoom)
   }
 
-  brushed(){}
+  brushed(){
+    const self = this
+    const { data, brush } = this
+    const { variables, xVariable, yVariables } = this.options
+    const extent = brush.extent()
+    data.forEach((d, i) => {
+      if (x(variables[xVariable].accessor(d, i)) >= extent[0][0] && x(variables[xVariable].accessor(d, i)) <= extent[0][1]) {
+        d.selected = []
+        yVariables.forEach((v, s) = {
+          if (variables[v]) d.defined.push(s)
+        })
+      }
+    })
+
+  }
 
   brushended(){
     const { brush, brushG } = this
