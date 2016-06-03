@@ -533,7 +533,9 @@ export class ScatterChart {
       })
       .on('keyup.' + id, _ => {
         const { useZoom } = self.options
-        if (zoomKeyCodes.indexOf(d3.event.keyCode) > -1) {
+
+        // horizontal (H) or vertical (V) zooming
+        if ([72, 86].indexOf(d3.event.keyCode) > -1) {
           self.keyPressed = null
           if (useZoom) self.updateZoom()
         }
