@@ -267,6 +267,10 @@ export class LineChart {
 
     this.lines.exit().remove()
 
+    // define brush for dots
+    this.brushG = this.g.append('g')
+      .attr('class', 'brush')
+
     //
     // Dots
     //
@@ -277,10 +281,6 @@ export class LineChart {
       .append('g')
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
-
-    // define brush for dots
-    this.brushG = this.dots.append('g')
-      .attr('class', 'brush')
 
     let dot = this.dots.selectAll('.dot')
       .data(v => data)
