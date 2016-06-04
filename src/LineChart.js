@@ -279,7 +279,7 @@ export class LineChart {
       .attr('class', 'brush')
 
     let dot = this.dots.selectAll('.dot')
-      .data(v => data.filter((d, i) => isDefined(variables[v].accessor(d, i))))
+      .data(v => data)
       .enter()
       .append('circle')
       .attr('class', 'dot')
@@ -291,6 +291,7 @@ export class LineChart {
       .attr('r', 5.0)
       .style('stroke', (d, i, s) => variables[yVariables[s]].color || colors[s])
       .style('fill', (d, i, s) => variables[yVariables[s]].color || colors[s])
+      .style('display', (d, i, s) => !isDefined(variables[yVariables[s]].accessor(d, i)) ? 'none' : null)
 
     if (useEdit) {
       dot.
@@ -465,6 +466,7 @@ export class LineChart {
       .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s) > -1)
       .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
+      .style('display', (d, i, s) => !isDefined(variables[yVariables[s]].accessor(d, i)) ? 'none' : null)
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
