@@ -296,11 +296,11 @@ export class LineChart {
       .style('stroke', (d, i, s) => variables[yVariables[s]].color || colors[s])
       .style('fill', (d, i, s) => variables[yVariables[s]].color || colors[s])
       .style('display', (d, i, s) => !isDefined(variables[yVariables[s]].accessor(d, i)) ? 'none' : null)
+      .style('cursor', 'pointer')
+      .on('click', this.pointClick.bind(this))
 
     if (useEdit) {
-      dot.
-        style('cursor', 'pointer')
-        .on('click', this.pointClick.bind(this))
+      dot
         .on('mousedown.drag', this.pointDrag.bind(this))
         .on('touchstart.drag', this.pointDrag.bind(this))
     }
@@ -498,7 +498,31 @@ export class LineChart {
   }
 
   pointClick(d, i, s){
-    this.dispatch[EVENTS.POINT.CLICK](d, i, s)
+    const { useSelect } = this.options
+    const self = this
+
+    if (useSelect){
+      // initialize selected indices if needed
+      if (!self.selectedIndices[i]) self.selectedIndices[i] = []
+
+      let idx = d.selected.indexOf(s)
+      if (idx > -1) {
+        d.selected.splice(idx, 1)
+        self.selectedIndices[i].splice(idx, 1)
+      } else {
+        d.selected.push(s)
+        self.selectedIndices[i].push(s)
+      }
+
+      self.redraw()
+
+      // dispatch POINT CLICK event
+      self.dispatch[EVENTS.POINT.CLICK](d, i, s)
+
+      // trigger POINT SELECT event
+      self.selectPointTrigger(self.selectedIndices)
+    }
+
     d3.event.preventDefault()
     d3.event.stopPropagation()
   }
