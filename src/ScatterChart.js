@@ -331,16 +331,16 @@ export class ScatterChart {
       this.doVoronoi()
     }
 
+    // define brush for dots
+    this.brushG = this.g.append('g')
+      .attr('class', 'brush')
+
     //
     // Dots
     //
     const dots = this.g.append('g')
       .attr('class', 'dots')
       .attr('clip-path', 'url(#clip)')
-
-    // define brush for dots
-    this.brushG = dots.append('g')
-      .attr('class', 'brush')
 
     // define dot
     this.dot = dots.selectAll('.dot')
