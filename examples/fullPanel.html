@@ -172,9 +172,9 @@
   multiLineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
     logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i, s: s });
   });
-//  multiLineChart.dispatch.on(Divis.EVENTS.POINT.SELECT, function(d, i, s){
-//    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.SELECT, d: d, i: i, s: s });
-//  });
+  multiLineChart.dispatch.on(Divis.EVENTS.POINT.SELECT, function(d, i){
+    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.SELECT, d: d, i: i });
+  });
 //  multiLineChart.dispatch.on(Divis.EVENTS.POINT.ADD, function(d, i, s){
 //    logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.ADD, d: d, i: i, s: s });
 //  });

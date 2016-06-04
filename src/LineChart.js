@@ -41,7 +41,11 @@ export class LineChart {
 
   constructor(options = {}, data = []){
     this.options = {}
-    this.dispatch = d3.dispatch(EVENTS.POINT.DRAG, EVENTS.POINT.CLICK)
+    this.dispatch = d3.dispatch(
+      EVENTS.POINT.DRAG,
+      EVENTS.POINT.CLICK,
+      EVENTS.POINT.SELECT
+    )
 
     // initialize array-like object of selected point indices
     this.selectedIndices = {}
@@ -633,6 +637,9 @@ export class LineChart {
     // clear brush
     brush.clear()
     brushG.call(brush)
+
+    // trigger POINT SELECT event
+    this.selectPointTrigger(this.selectedIndices)
   }
 
   reset(){
@@ -658,5 +665,18 @@ export class LineChart {
     this.calculateSize()
     this.calculateLimits()
     this.render()
+  }
+
+  // Dispatch POINT SELECT event
+  selectPointTrigger(selectedIndices){
+    const data = this.data
+
+    // define selectedPoints
+    let selectedPoints = []
+
+    for (let i in selectedIndices) selectedPoints.push(data[i])
+
+    // dispatch POINT SELECT event
+    this.dispatch[EVENTS.POINT.SELECT](selectedPoints, selectedIndices)
   }
 }
