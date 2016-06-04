@@ -43,10 +43,11 @@ export class LineChart {
     this.options = {}
     this.dispatch = d3.dispatch(EVENTS.POINT.DRAG, EVENTS.POINT.CLICK)
 
-    // initialize array of selected point indices
-    this.selectedIndices = []
-    this.selectedIndicesExtra = []
+    // initialize array-like object of selected point indices
+    this.selectedIndices = {}
+    this.selectedIndicesExtra = {}
 
+    // define options and data
     this.setOptions(options)
     this.setData(data)
 
@@ -135,9 +136,12 @@ export class LineChart {
       panel
       } = options
 
+    // auxilliary params
+    const defaultBrushExtent = [[0, 0], [0, 0]]
+
     // recalculate data with selections
-    data.forEach(d => d.selected = false)
-    selectedIndices.forEach(i => data[i].selected = true)
+    data.forEach(d => d.selected = [])
+    for (let i in selectedIndices) data[i].selected = selectedIndices[i]
 
     // x-scale
     this.x = d3.scale.linear()
@@ -187,6 +191,7 @@ export class LineChart {
     this.brush = d3.svg.brush()
       .x(self.x)
       .y(self.y)
+      .extent(defaultBrushExtent)
       .on('brush', this.brushed.bind(this))
       .on('brushend', this.brushended.bind(this))
 
@@ -280,7 +285,7 @@ export class LineChart {
       .attr('class', 'dot')
 
     dot
-      .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s) > -1) //d === self.selected && s === self.seriesIndex )
+      .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s) > -1)
       .attr('cx', (d, i, s) => self.x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => self.y(variables[yVariables[s]].accessor(d, i)))
       .attr('r', 5.0)
@@ -457,7 +462,7 @@ export class LineChart {
     })
 
     dots.selectAll('.dot')
-      .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s))//d === selected && s === seriesIndex )
+      .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s) > -1)
       .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
 
@@ -572,28 +577,56 @@ export class LineChart {
 
   brushed(){
     const self = this
-    const { data, brush } = this
+    const { data, brush, dots } = this
     const { variables, xVariable, yVariables } = this.options
     const extent = brush.extent()
-    data.forEach((d, i) => {
-      if (x(variables[xVariable].accessor(d, i)) >= extent[0][0] && x(variables[xVariable].accessor(d, i)) <= extent[0][1]) {
-        d.selected = []
-        yVariables.forEach((v, s) = {
-          if (variables[v]) d.defined.push(s)
-        })
-      }
-    })
 
+    // clear all selection
+    data.forEach(d => d.selected = [])
+
+    // clear current brush selected indices
+    self.selectedIndicesExtra = {}
+
+    // update dots with selected indices
+    dots.selectAll('.dot')
+      .classed('selected', (d, i, s) => {
+        let selected = false
+
+        // check if current point in brush extent and then add it to selection
+        if (
+          variables[xVariable].accessor(d, i) >= extent[0][0] &&
+          variables[yVariables[s]].accessor(d, i) >= extent[0][1] &&
+          variables[xVariable].accessor(d, i) <= extent[1][0] &&
+          variables[yVariables[s]].accessor(d, i) <= extent[1][1]
+        ) {
+          d.selected.push(s)
+          selected = true
+        }
+
+        if (selected) {
+          if (!self.selectedIndicesExtra[i]) self.selectedIndicesExtra[i] = []
+          self.selectedIndicesExtra[i].push(s)
+        }
+        else if (self.selectedIndices[i] && self.selectedIndices[i].indexOf(s) > -1) {
+          d.selected.push(s)
+          selected = true
+        }
+
+        return selected
+      })
   }
 
   brushended(){
     const { brush, brushG } = this
 
     // update selected indices
-    this.selectedIndices = this.selectedIndices.concat(this.selectedIndicesExtra)
+    for (let i in this.selectedIndicesExtra) {
+      if (!this.selectedIndices[i]) this.selectedIndices[i] = []
+      this.selectedIndices[i] = this.selectedIndices[i].concat(this.selectedIndicesExtra[i])
+    }
 
     // clear extra selected indices
-    this.selectedIndicesExtra = []
+    this.selectedIndicesExtra = {}
 
     // clear brush
     brush.clear()
