@@ -816,9 +816,6 @@ export class ScatterChart {
 
       return d.selected
     })
-
-    // trigger POINT SELECT event
-    this.selectPointTrigger(self.selectedIndices.concat(self.selectedIndicesExtra))
   }
 
   brushended(){
@@ -833,6 +830,9 @@ export class ScatterChart {
     // clear brush
     brush.clear()
     brushG.call(brush)
+
+    // trigger POINT SELECT event
+    this.selectPointTrigger(this.selectedIndices)
   }
 
   reset(){
