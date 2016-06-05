@@ -424,7 +424,7 @@ export class LineChart {
         // clear selection (Esc)
         if (keyCode === 27 && Object.keys(self.selectedIndices).length) {
           self.clearSelection()
-          self.render()
+          self.saveRender()
           return
         }
       })
@@ -456,6 +456,18 @@ export class LineChart {
   render(){
     this.clear()
     this.init()
+    this.redraw()
+  }
+
+  // Render graph with zoom domains
+  saveRender(){
+    // set current domain after render
+    const xDomain = this.x.domain()
+    const yDomain = this.y.domain()
+    this.render()
+    this.x.domain(xDomain)
+    this.y.domain(yDomain)
+    if (this.options.useZoom) this.updateZoom()
     this.redraw()
   }
 
