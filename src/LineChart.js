@@ -1,5 +1,6 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
+import { ContextMenu } from './ContextMenu'
 import { isDefined } from './utils'
 
 /**
@@ -31,6 +32,17 @@ const defaults = {
     itemWidth: 50,
     gap: 5,
     isHorizontal: true
+  },
+  contextMenu: {
+    items: [
+      {
+        title: 'Clear Selection',
+        action: function(chart, elm, d, i, s) {
+          chart.clearSelection()
+          chart.saveRender()
+        }
+      }
+    ]
   }
 }
 
@@ -66,6 +78,9 @@ export class LineChart {
 
     // init global events
     this.initGlobalEvents()
+
+    // init context menu
+    this.contextMenu = new ContextMenu(this.options.contextMenu)
   }
 
   setOptions(_){
@@ -403,6 +418,7 @@ export class LineChart {
       .on('touchmove.drag', this.mousemove.bind(this))
       .on('mouseup.drag',   this.mouseup.bind(this))
       .on('touchend.drag',  this.mouseup.bind(this))
+      .on('contextmenu', this.contextMenu.render(this))
   }
 
   initGlobalEvents(element = window){
