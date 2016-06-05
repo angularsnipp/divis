@@ -793,7 +793,7 @@ export class ScatterChart {
 
   brushed(){
     const self = this
-    const { quadTree, brush, dot } = this
+    const { data, quadTree, brush, dot } = this
     const { variables, xVariable, yVariable } = this.options
     const extent = brush.extent()
     const xAccessor = variables[xVariable].accessor
@@ -802,7 +802,8 @@ export class ScatterChart {
     // reset selectedIndicesFromBrush
     self.selectedIndicesExtra = []
 
-    dot.each(d => d.selected = false)
+    // clear data selection
+    data.forEach(d => d.selected = false)
 
     quadTreeSearch(quadTree, extent, xAccessor, yAccessor)
 
@@ -907,7 +908,7 @@ export class ScatterChart {
 
   clearSelection(){
     // clear selection if not useSelect mode
-    this.dot.each(d => d.selected = false)
+    this.data.forEach(d => d.selected = false)
 
     // reset selected indices
     this.selectedIndices = []

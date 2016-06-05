@@ -703,4 +703,12 @@ export class LineChart {
     // dispatch POINT SELECT event
     this.dispatch[EVENTS.POINT.SELECT](selectedPoints, selectedIndices)
   }
+
+  clearSelection(){
+    // clear selection if not useSelect mode
+    this.data.forEach(d => d.selected = [])
+
+    // reset selected indices
+    this.selectedIndices = {}
+  }
 }
