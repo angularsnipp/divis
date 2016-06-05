@@ -414,14 +414,25 @@ export class LineChart {
       .on('keydown.' + id, _ => {
         const { useZoom } = self.options
         const keyCode = d3.event.keyCode
-        if (keyCodes.indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
+
+        // horizontal (H) or vertical (V) zooming
+        if ([72, 86].indexOf(keyCode) > -1 && self.keyPressed !== keyCode) {
           self.keyPressed = keyCode
           if (useZoom) self.updateZoom()
+        }
+
+        // clear selection (Esc)
+        if (keyCode === 27 && Object.keys(self.selectedIndices).length) {
+          self.clearSelection()
+          self.render()
+          return
         }
       })
       .on('keyup.' + id, _ => {
         const { useZoom } = self.options
-        if (keyCodes.indexOf(d3.event.keyCode) > -1) {
+
+        // horizontal (H) or vertical (V) zooming
+        if ([72, 86].indexOf(d3.event.keyCode) > -1) {
           self.keyPressed = null
           if (useZoom) self.updateZoom()
         }
