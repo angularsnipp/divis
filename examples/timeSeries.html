@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Divis Line Chart</title>
+  <title>Divis Time Series</title>
   <link rel="stylesheet" href="../build/divis.css"/>
   <link rel="stylesheet" href="./styles.css"/>
 </head>
 <body>
 
 <div class="examples">
-  <a href="chartCommunication.html">Chart Communication</a> |
-  <a href="voronoi.html">Voronoi Diagramm</a> |
-  <a href="panel.html">Chart Panel</a> |
-  <a href="AddRemovePoints.html">Add/Remove Points</a> |
-  <a href="selectPoints.html">Select Points</a> |
-  <a href="fullPanel.html">Full Panel</a>
-  <a href="timeSeries.html">Time Series</a>
+  <a href="index.html">Index</a>
 </div>
 
 <div class="grid border">
 
   <div class="grid-cell c70">
-    <h3>Line Chart</h3>
+    <h3>Time Series</h3>
     <div id="lineChart"></div>
   </div>
 
@@ -35,7 +29,7 @@
 <div class="grid border">
 
   <div class="grid-cell c70">
-    <h3>Multi Line Chart</h3>
+    <h3>Multi Time Series</h3>
     <div id="multiLineChart"></div>
   </div>
 
@@ -47,28 +41,15 @@
 
 </div>
 
-<div class="grid border">
-
-  <div class="grid-cell c70">
-    <h3>Scatter Chart</h3>
-    <div id="scatterChart"></div>
-  </div>
-
-  <div class="grid-cell c30">
-    <div id="scatterChartLog" class="log">
-      <div style="font-style: italic; text-decoration: underline;">LOG</div>
-    </div>
-  </div>
-
-</div>
-
 <script src="../node_modules/d3/d3.min.js"></script>
 <script src="../build/divis.js"></script>
 <script src="./script.js"></script>
 <script>
 
+  var date0 = new Date(2016, 00, 01);
+
   // LINE CHART
-  var lineChartData = generate(100, function(i){ return { x: i, y: Math.random() } });
+  var lineChartData = generate(100, function(i){ return { x: d3.time.day.offset(date0, i), y: Math.random() } });
   var lineChartOptions = {
     target: '#lineChart',
     height: 400,
@@ -89,7 +70,7 @@
   // MULTI LINE CHART
   var multiLineChartData = generate(100, function(i){
     return {
-      x: i,
+      x: d3.time.day.offset(date0, i),
       y1: Math.random() + 1,
       y2: Math.random() + 2,
       y3: Math.random() + 3,
@@ -123,53 +104,10 @@
     logEvent('multiLineChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
   });
 
-  // SCATTER CHART
-  var groups = ['class 1', 'class 2', 'class 3'];
-  var scatterChartData = generate(100, function(i){ return { x: Math.random(), y: Math.random(), group: groups[parseInt(2.99*Math.random())] } });
-  var scatterChartOptions = {
-    target: '#scatterChart',
-    height: 400,
-    margin: { top: 23, right: 30, bottom: 40, left: 40 },
-    groupVariable: 'group',
-    variables: {
-      x: { name: 'X', accessor: function(d){return d.x;} },
-      y: { name: 'Y', accessor: function(d){return d.y;}},
-      group: {
-        name: 'Group ytye',
-        accessor: function (d) { return d.group },
-        values: {
-          'class 1': {id: 0, color: 'lightcoral'},
-          'class 2': {id: 1, color: 'lightgreen'},
-          'class 3': {id: 2, color: 'lightblue'}
-        }
-      }
-    },
-    legend: {
-      align: 'left',
-      x: 0,
-      y: 0,
-      itemHeight: 12,
-      itemWidth: 75,
-      gap: 5,
-      isHorizontal: true
-    }
-  };
-
-  var scatterChart = new Divis.ScatterChart(scatterChartOptions, scatterChartData);
-  scatterChart.render();
-
-  scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
-    logEvent('scatterChartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i});
-  });
-  scatterChart.dispatch.on(Divis.EVENTS.POINT.CLICK, function(d, i){
-    logEvent('scatterChartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i });
-  });
-
   // Resizing
   onResizeHandler(function(){
     lineChart.resize();
     multiLineChart.resize();
-    scatterChart.resize();
   });
 
 </script>
