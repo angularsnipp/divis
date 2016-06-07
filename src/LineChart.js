@@ -14,6 +14,8 @@ const defaults = {
     x: { name: 'X', accessor: d => d.x },
     y: { name: 'Y', accessor: d => d.y }
   },
+  x: d3.scale.linear(),
+  y: d3.scale.linear(),
   colors: d3.scale.category20().range().slice(10),
   useEdit: true,
   useZoom: true,
@@ -146,6 +148,8 @@ export class LineChart {
       variables,
       xVariable,
       yVariables,
+      x,
+      y,
       colors,
       legend,
       useEdit,
@@ -163,12 +167,12 @@ export class LineChart {
     for (let i in selectedIndices) data[i].selected = selectedIndices[i]
 
     // x-scale
-    this.x = d3.scale.linear()
+    this.x = x
       .domain([xMin, xMax])
       .range([0, w])
 
     // y-scale (inverted domain)
-    this.y = d3.scale.linear()
+    this.y = y
       .domain([yMin, yMax])
       .nice()
       .range([h, 0])
