@@ -36,6 +36,8 @@
 
   var groups = ['class 1', 'class 2', 'class 3'];
   var data = generate(20, function(i){ return { x: Math.random(), y: Math.random(), group: groups[parseInt(3*Math.random())] } });
+  var dataScatter = JSON.parse(JSON.stringify(data));
+  var dataLine = JSON.parse(JSON.stringify(data));
 
   // SCATTER CHART
   var scatterChartOptions = {
@@ -68,13 +70,16 @@
     }
   };
 
-  var scatterChart = new Divis.ScatterChart(scatterChartOptions, data);
+  var scatterChart = new Divis.ScatterChart(scatterChartOptions, dataScatter);
   scatterChart.render();
 
   scatterChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i){
     logEvent('chartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i });
 
     //redraw the line chart
+    d.selected ? d.selected = [0, 1] : d.selected = [];
+    dataLine[i] = d;
+
     lineChart.redraw();
   });
 
@@ -93,13 +98,16 @@
     usePanel: false
   };
 
-  var lineChart = new Divis.LineChart(lineChartOptions, data);
+  var lineChart = new Divis.LineChart(lineChartOptions, dataLine);
   lineChart.render();
 
   lineChart.dispatch.on(Divis.EVENTS.POINT.DRAG, function(d, i, s){
     logEvent('chartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
 
     //redraw the scatter chart
+    d.selected.length ? d.selected = true : d.selected = false;
+    dataScatter[i] = d;
+
     scatterChart.redraw();
   });
 

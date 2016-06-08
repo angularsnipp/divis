@@ -614,7 +614,7 @@ export class ScatterChart {
 
   // Update graph with data
   update() {
-    const { dot, x, y } = this
+    const { data, dot, x, y } = this
     const { variables, xVariable, yVariable, useVoronoi } = this.options
 
     // update voronoi diagram
@@ -622,6 +622,7 @@ export class ScatterChart {
 
     // update dots
     dot
+      .data(data)
       .classed('selected', d => d.selected )
       .attr('cx', (d, i) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i) => y(variables[yVariable].accessor(d, i)))

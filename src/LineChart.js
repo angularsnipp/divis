@@ -510,6 +510,7 @@ export class LineChart {
     })
 
     dots.selectAll('.dot')
+      .data(v => data)
       .classed('selected', (d, i, s) => d.selected && d.selected.indexOf(s) > -1)
       .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
