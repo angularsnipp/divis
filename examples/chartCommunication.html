@@ -77,8 +77,7 @@
     logEvent('chartLog', { event: Divis.EVENTS.POINT.DRAG, d: d, i: i });
 
     //redraw the line chart
-    d.selected ? d.selected = [0, 1] : d.selected = [];
-    dataLine[i] = d;
+    dataLine[i] = copy(d, function(d){ return d.selected ? [0, 1] : []; });
 
     lineChart.redraw();
   });
@@ -105,8 +104,7 @@
     logEvent('chartLog', { event: Divis.EVENTS.POINT.CLICK, d: d, i: i, s: s });
 
     //redraw the scatter chart
-    d.selected.length ? d.selected = true : d.selected = false;
-    dataScatter[i] = d;
+    dataScatter[i] = copy(d, function(d){ return d.selected.length ? true : false; });
 
     scatterChart.redraw();
   });
@@ -115,7 +113,21 @@
   onResizeHandler(function(){
     scatterChart.resize();
     lineChart.resize();
-  })
+  });
+
+  function copy(d, f){
+    var q = {};
+    for (var key in d) {
+      if (d.hasOwnProperty(key)) {
+        if (key == 'selected') {
+          q[key] = f(d);
+        } else {
+          q[key] = d[key];
+        }
+      }
+    }
+    return q;
+  }
 
 </script>
 </body>
