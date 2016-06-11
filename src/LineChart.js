@@ -208,7 +208,7 @@ export class LineChart {
       .on('zoom', this.zoomed.bind(this))
 
     // define dragged and selected point
-    this.dragged = this.selected = null
+    this.dragged = null
 
     // Brush
     this.brush = d3.svg.brush()
@@ -428,7 +428,6 @@ export class LineChart {
   initGlobalEvents(element = window){
     const self = this
     const { id } = this.options
-    const keyCodes = [72, 86] // ['H', 'V']
 
     d3.select(element)
       .on('keydown.' + id, _ => {
@@ -500,7 +499,7 @@ export class LineChart {
   }
 
   update() {
-    const { data, line, lines, dots, x, y, selected, seriesIndex } = this
+    const { data, line, lines, dots, x, y } = this
     const { variables, xVariable, yVariables } = this.options
 
     lines.attr('d', v => {
@@ -523,7 +522,7 @@ export class LineChart {
   }
 
   chartClick() {
-    this.selected = this.dragged = null
+    this.dragged = null
     this.update()
   }
 
@@ -535,7 +534,7 @@ export class LineChart {
       d3.event.stopPropagation()
     }
 
-    self.selected = self.dragged = d
+    self.dragged = d
     self.pointIndex = i
     self.seriesIndex = s
     self.update()
