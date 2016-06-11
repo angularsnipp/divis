@@ -4,51 +4,6 @@ import { ContextMenu } from './ContextMenu'
 import { isDefined } from './utils'
 
 /**
- * Default config
- */
-const defaults = {
-  margin: {top: 23, right: 20, bottom: 40, left: 40},
-  xVariable: 'x',
-  yVariables: ['y'],
-  variables: {
-    x: { name: 'X', accessor: d => d.x },
-    y: { name: 'Y', accessor: d => d.y }
-  },
-  x: d3.scale.linear(),
-  y: d3.scale.linear(),
-  colors: d3.scale.category20().range().slice(10),
-  useEdit: true,
-  useZoom: true,
-  useSelect: false,
-  usePanel: true,
-  panel: [
-    { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
-    { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
-    { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
-  ],
-  legend: {
-    align: 'left',
-    x: 0,
-    y: 0,
-    itemHeight: 12,
-    itemWidth: 50,
-    gap: 5,
-    isHorizontal: true
-  },
-  contextMenu: {
-    items: [
-      {
-        title: 'Clear Selection',
-        action: function(chart, elm, d, i, s) {
-          chart.clearSelection()
-          chart.saveRender()
-        }
-      }
-    ]
-  }
-}
-
-/**
  * Line chart class
  */
 export class LineChart {
@@ -86,6 +41,51 @@ export class LineChart {
   }
 
   setOptions(_){
+    /**
+     * Default config
+     */
+    const defaults = {
+      margin: {top: 23, right: 20, bottom: 40, left: 40},
+      xVariable: 'x',
+      yVariables: ['y'],
+      variables: {
+        x: { name: 'X', accessor: d => d.x },
+        y: { name: 'Y', accessor: d => d.y }
+      },
+      x: d3.scale.linear(),
+      y: d3.scale.linear(),
+      colors: d3.scale.category20().range().slice(10),
+      useEdit: true,
+      useZoom: true,
+      useSelect: false,
+      usePanel: true,
+      panel: [
+        { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+        { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+        { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
+      ],
+      legend: {
+        align: 'left',
+        x: 0,
+        y: 0,
+        itemHeight: 12,
+        itemWidth: 50,
+        gap: 5,
+        isHorizontal: true
+      },
+      contextMenu: {
+        items: [
+          {
+            title: 'Clear Selection',
+            action: function(chart, elm, d, i, s) {
+              chart.clearSelection()
+              chart.saveRender()
+            }
+          }
+        ]
+      }
+    }
+
     // save initial options
     this._options = _
 

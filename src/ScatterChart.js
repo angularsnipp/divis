@@ -4,71 +4,6 @@ import { ContextMenu } from './ContextMenu'
 import { polygon, quadTreeSearch } from './utils'
 
 /**
- * Default config
- */
-const defaults = {
-  margin: {top: 23, right: 20, bottom: 40, left: 40},
-  xVariable: 'x',
-  yVariable: 'y',
-  groupVariable: 'group',
-  variables: {
-    x: { name: 'X', accessor: d => d.x },
-    y: { name: 'Y', accessor: d => d.y },
-    group: {
-      name: 'Group',
-      accessor: d => d.group,
-      values: {
-        0: { id: 0 },
-        1: { id: 1 }
-      }
-    }
-  },
-  colors: d3.scale.category20().range().slice(10),
-  useEdit: true,
-  useZoom: true,
-  useSelect: false,
-  useAdd: false,
-  useRemove: false,
-  useVoronoi: false,
-  usePanel: true,
-  panel: [
-    { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
-    { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
-    { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
-  ],
-  groupPanel: {
-    selectedIndex: 0
-  },
-  legend: {
-    align: 'left',
-    x: 0,
-    y: 0,
-    itemHeight: 12,
-    itemWidth: 50,
-    gap: 5,
-    isHorizontal: true
-  },
-  contextMenu: {
-    items: [
-      {
-        title: 'Clear Selection',
-        action: function(chart, elm, d, i, s) {
-          chart.clearSelection()
-          chart.saveRender()
-        }
-      },
-      {
-        title: 'Delete',
-        action: function(chart, elm, d, i, s) {
-          chart.removeSelectedPoints()
-          chart.saveRender()
-        }
-      }
-    ]
-  }
-}
-
-/**
  * Scatter chart class
  */
 export class ScatterChart {
@@ -109,6 +44,71 @@ export class ScatterChart {
 
   // Set chart options
   setOptions(_){
+    /**
+     * Default config
+     */
+    const defaults = {
+      margin: {top: 23, right: 20, bottom: 40, left: 40},
+      xVariable: 'x',
+      yVariable: 'y',
+      groupVariable: 'group',
+      variables: {
+        x: { name: 'X', accessor: d => d.x },
+        y: { name: 'Y', accessor: d => d.y },
+        group: {
+          name: 'Group',
+          accessor: d => d.group,
+          values: {
+            0: { id: 0 },
+            1: { id: 1 }
+          }
+        }
+      },
+      colors: d3.scale.category20().range().slice(10),
+      useEdit: true,
+      useZoom: true,
+      useSelect: false,
+      useAdd: false,
+      useRemove: false,
+      useVoronoi: false,
+      usePanel: true,
+      panel: [
+        { type: 'checkbox', text: 'Edit', visible: true, option: 'useEdit' },
+        { type: 'checkbox', text: 'Zoom', visible: true, option: 'useZoom' },
+        { type: 'button', text: 'Reset', visible: true, callback: chart => chart.reset() }
+      ],
+      groupPanel: {
+        selectedIndex: 0
+      },
+      legend: {
+        align: 'left',
+        x: 0,
+        y: 0,
+        itemHeight: 12,
+        itemWidth: 50,
+        gap: 5,
+        isHorizontal: true
+      },
+      contextMenu: {
+        items: [
+          {
+            title: 'Clear Selection',
+            action: function(chart, elm, d, i, s) {
+              chart.clearSelection()
+              chart.saveRender()
+            }
+          },
+          {
+            title: 'Delete',
+            action: function(chart, elm, d, i, s) {
+              chart.removeSelectedPoints()
+              chart.saveRender()
+            }
+          }
+        ]
+      }
+    }
+
     // save initial options
     this._options = _
 
