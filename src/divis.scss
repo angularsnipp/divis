@@ -72,6 +72,14 @@
     }
   }
 
+  .legend {
+    font: 12px sans-serif;
+
+    .legend-item {
+      cursor: pointer;
+    }
+  }
+
   .brush .extent {
     stroke: #fff;
     fill-opacity: .125;

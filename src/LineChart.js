@@ -16,10 +16,6 @@ export class LineChart {
       EVENTS.POINT.SELECT
     )
 
-    // initialize array-like object of selected point indices
-    this.selectedIndices = {}
-    this.selectedIndicesExtra = {}
-
     // define options and data
     this.setOptions(options)
     this.setData(data)
@@ -38,6 +34,15 @@ export class LineChart {
 
     // init context menu
     this.contextMenu = new ContextMenu(this.options.contextMenu)
+
+    // initialize array-like object of selected point indices
+    this.selectedIndices = {}
+    this.selectedIndicesExtra = {}
+
+    // initialize legend index
+    let yVarsLength = this.options.yVariables.length
+    this.legendIndex = new Array(yVarsLength)
+    for (let i = 0; i < yVarsLength; i++) this.legendIndex[i] = true;
   }
 
   setOptions(_){
@@ -70,7 +75,7 @@ export class LineChart {
         y: 0,
         itemHeight: 12,
         itemWidth: 50,
-        gap: 5,
+        gap: 4,
         isHorizontal: true
       },
       contextMenu: {
@@ -349,17 +354,19 @@ export class LineChart {
         ? `translate(${i * legend.itemWidth}, 0)`
         : `translate(0, ${i * legend.itemHeight})`
       )
+    .on('click', this.legendClick.bind(this))
 
-    item
+    this.legendItemRect = item
       .append('rect')
       .attr('width', legend.itemHeight)
       .attr('height', legend.itemHeight)
-      .attr('fill', (v, i) => variables[v].color || colors[i])
+      .attr('fill', (v, i) => self.legendIndex[i] ? variables[v].color || colors[i] : 'lightgray')
 
-    item.append('text')
+    this.legendItemText = item.append('text')
       .text(v => variables[v].name)
       .attr('x', legend.itemHeight + legend.gap)
-      .attr('y', v => legend.itemHeight - 1)
+      .attr('y', v => legend.itemHeight - 2)
+      .style('color', (v, i) => self.legendIndex[i] ? '#000' : 'lightgray')
 
     items.exit().remove()
 
@@ -499,14 +506,15 @@ export class LineChart {
   }
 
   update() {
-    const { data, line, lines, dots, x, y } = this
-    const { variables, xVariable, yVariables } = this.options
+    const { data, line, lines, dots, x, y, legendItemRect, legendItemText, legendIndex } = this
+    const { variables, xVariable, yVariables, colors } = this.options
 
     lines.attr('d', v => {
       return line
         .defined((d, i) => isDefined(variables[v].accessor(d, i)))
         .y((d, i) => y(variables[v].accessor(d, i)))(data)
     })
+    .style('visibility', (d, i) => legendIndex[i] ? 'visible' : 'hidden')
 
     dots.selectAll('.dot')
       .data(v => data)
@@ -514,6 +522,11 @@ export class LineChart {
       .attr('cx', (d, i, s) => x(variables[xVariable].accessor(d, i)))
       .attr('cy', (d, i ,s) => y(variables[yVariables[s]].accessor(d, i)))
       .style('display', (d, i, s) => !isDefined(variables[yVariables[s]].accessor(d, i)) ? 'none' : null)
+      .style('visibility', (d, i, s) => legendIndex[s] ? 'visible' : 'hidden')
+
+    // update legend
+    legendItemRect.attr('fill', (v, i) => legendIndex[i] ? variables[v].color || colors[i] : 'lightgray')
+    legendItemText.style('opacity', (v, i) => legendIndex[i] ? 1 : .3)
 
     if (d3.event && d3.event.keyCode) {
       d3.event.preventDefault()
@@ -568,6 +581,12 @@ export class LineChart {
 
     d3.event.preventDefault()
     d3.event.stopPropagation()
+  }
+
+  legendClick(d, i){
+    // update select Index
+    this.legendIndex[i] = !this.legendIndex[i]
+    this.redraw()
   }
 
   mousemove() {
