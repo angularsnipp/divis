@@ -322,6 +322,27 @@ export class LineChart {
       .style('display', (d, i, s) => !isDefined(variables[yVariables[s]].accessor(d, i)) ? 'none' : null)
       .style('cursor', 'pointer')
       .on('click', this.pointClick.bind(this))
+      .on('mouseover', function(d, i, s){
+        const tpl =
+          '<ul>' +
+            '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
+            '<li>' + variables[yVariables[s]].name + ': ' + variables[yVariables[s]].accessor(d, i) + '</li>' +
+          '</ul>'
+
+        self.tooltip.html(tpl)
+
+        const xPosition = d3.mouse(this)[0] - 20
+        const yPosition = d3.mouse(this)[1] - 25
+
+        self.tooltip.style('top', yPosition + 'px')
+        self.tooltip.style('left', xPosition + 'px')
+
+        // display tooltip
+        self.tooltip.style('display', null);
+      })
+      .on('mouseout', (d, i, s) => {
+        self.tooltip.style('display', 'none');
+      })
 
     if (useEdit) {
       dot
@@ -419,6 +440,11 @@ export class LineChart {
 
       _panel.exit().remove()
     }
+
+    // Tooltip
+    this.tooltip = d3.select(target).append('div')
+      .attr('class', 'divis-tooltip')
+      .style('display', 'none');
 
     // Events
     d3.select(target)
