@@ -1,6 +1,7 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
 import { ContextMenu } from './ContextMenu'
+import { Tooltip } from './Tooltip'
 import { isDefined } from './utils'
 
 /**
@@ -34,6 +35,9 @@ export class LineChart {
 
     // init context menu
     this.contextMenu = new ContextMenu(this.options.contextMenu)
+
+    // init tooltip
+    this.tooltip = new Tooltip({ target: this.options.target })
 
     // initialize array-like object of selected point indices
     this.selectedIndices = {}
@@ -329,19 +333,11 @@ export class LineChart {
             '<li>' + variables[yVariables[s]].name + ': ' + variables[yVariables[s]].accessor(d, i) + '</li>' +
           '</ul>'
 
-        self.tooltip.html(tpl)
-
-        const xPosition = d3.mouse(this)[0] - 20
-        const yPosition = d3.mouse(this)[1] - 25
-
-        self.tooltip.style('top', yPosition + 'px')
-        self.tooltip.style('left', xPosition + 'px')
-
         // display tooltip
-        self.tooltip.style('display', null);
+        self.tooltip.content(tpl).show(this)
       })
       .on('mouseout', (d, i, s) => {
-        self.tooltip.style('display', 'none');
+        self.tooltip.hide()
       })
 
     if (useEdit) {
@@ -442,9 +438,7 @@ export class LineChart {
     }
 
     // Tooltip
-    this.tooltip = d3.select(target).append('div')
-      .attr('class', 'divis-tooltip')
-      .style('display', 'none');
+    this.tooltip.init();
 
     // Events
     d3.select(target)
