@@ -1,13 +1,6 @@
 import d3 from 'd3'
 
 /**
- * Default config
- */
-const defaults = {
-  items: []
-}
-
-/**
  * Context menu class
  */
 export class ContextMenu {
@@ -20,6 +13,10 @@ export class ContextMenu {
   }
 
   setOptions(_){
+    const defaults = {
+      items: []
+    }
+
     Object.assign(this.options, defaults, _)
   }
 
