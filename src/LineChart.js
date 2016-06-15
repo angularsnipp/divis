@@ -92,7 +92,8 @@ export class LineChart {
             }
           }
         ]
-      }
+      },
+      useTooltip: false
     }
 
     // save initial options
@@ -165,7 +166,8 @@ export class LineChart {
       useZoom,
       useSelect,
       usePanel,
-      panel
+      panel,
+      useTooltip
       } = options
 
     // auxilliary params
@@ -326,19 +328,23 @@ export class LineChart {
       .style('display', (d, i, s) => !isDefined(variables[yVariables[s]].accessor(d, i)) ? 'none' : null)
       .style('cursor', 'pointer')
       .on('click', this.pointClick.bind(this))
-      .on('mouseover', function(d, i, s){
-        const tpl =
-          '<ul>' +
+
+    if (useTooltip) {
+      dot
+        .on('mouseover', function(d, i, s){
+          const tpl =
+            '<ul>' +
             '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
             '<li>' + variables[yVariables[s]].name + ': ' + variables[yVariables[s]].accessor(d, i) + '</li>' +
-          '</ul>'
+            '</ul>'
 
-        // display tooltip
-        self.tooltip.content(tpl).show(this)
-      })
-      .on('mouseout', (d, i, s) => {
-        self.tooltip.hide()
-      })
+          // display tooltip
+          self.tooltip.content(tpl).show(this)
+        })
+        .on('mouseout', (d, i, s) => {
+          self.tooltip.hide()
+        })
+    }
 
     if (useEdit) {
       dot
@@ -438,7 +444,9 @@ export class LineChart {
     }
 
     // Tooltip
-    this.tooltip.init()
+    if (useTooltip) {
+      this.tooltip.init()
+    }
 
     // Events
     d3.select(target)
