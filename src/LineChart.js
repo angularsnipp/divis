@@ -93,7 +93,7 @@ export class LineChart {
           }
         ]
       },
-      useTooltip: false
+      useTooltip: true
     }
 
     // save initial options
@@ -334,8 +334,8 @@ export class LineChart {
         .on('mouseover', function(d, i, s){
           const tpl =
             '<ul>' +
-            '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
-            '<li>' + variables[yVariables[s]].name + ': ' + variables[yVariables[s]].accessor(d, i) + '</li>' +
+              '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
+              '<li>' + variables[yVariables[s]].name + ': ' + variables[yVariables[s]].accessor(d, i) + '</li>' +
             '</ul>'
 
           // display tooltip

@@ -110,7 +110,8 @@ export class ScatterChart {
             }
           }
         ]
-      }
+      },
+      useTooltip: true
     }
 
     // save initial options
@@ -207,7 +208,8 @@ export class ScatterChart {
       useVoronoi,
       usePanel,
       panel,
-      groupPanel
+      groupPanel,
+      useTooltip
       } = options
 
     // recalculate data with selections
@@ -370,25 +372,29 @@ export class ScatterChart {
       })
       .style('cursor', 'pointer')
       .on('click',  this.pointClick.bind(this))
-      .on('mouseover', function(d, i, s){
-        const tpl =
-          '<ul>' +
-            '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
-            '<li>' + variables[yVariable].name + ': ' + variables[yVariable].accessor(d, i) + '</li>' +
-          '</ul>'
 
-        // display tooltip
-        self.tooltip.content(tpl).show(this)
-      })
-      .on('mouseout', (d, i, s) => {
-        self.tooltip.hide()
-      })
+    if (useTooltip){
+      this.dot
+        .on('mouseover', function(d, i, s){
+          const tpl =
+            '<ul>' +
+              '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
+              '<li>' + variables[yVariable].name + ': ' + variables[yVariable].accessor(d, i) + '</li>' +
+            '</ul>'
 
-      if (useEdit) {
-        this.dot
-          .on('mousedown.drag',  this.pointDrag.bind(this))
-          .on('touchstart.drag', this.pointDrag.bind(this))
-      }
+          // display tooltip
+          self.tooltip.content(tpl).show(this)
+        })
+        .on('mouseout', (d, i, s) => {
+          self.tooltip.hide()
+        })
+    }
+
+    if (useEdit) {
+      this.dot
+        .on('mousedown.drag',  this.pointDrag.bind(this))
+        .on('touchstart.drag', this.pointDrag.bind(this))
+    }
 
     // call brush if useSelect mode
     if (useSelect) {
@@ -505,7 +511,9 @@ export class ScatterChart {
     }
 
     // Tooltip
-    this.tooltip.init()
+    if (useTooltip){
+      this.tooltip.init()
+    }
 
     // Events
     d3.select(target)
