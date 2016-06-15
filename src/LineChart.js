@@ -438,7 +438,7 @@ export class LineChart {
     }
 
     // Tooltip
-    this.tooltip.init();
+    this.tooltip.init()
 
     // Events
     d3.select(target)

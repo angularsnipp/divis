@@ -1,6 +1,7 @@
 import d3 from 'd3'
 import { EVENTS } from './Events'
 import { ContextMenu } from './ContextMenu'
+import { Tooltip } from './Tooltip'
 import { polygon, quadTreeSearch } from './utils'
 
 /**
@@ -40,6 +41,9 @@ export class ScatterChart {
 
     // init context menu
     this.contextMenu = new ContextMenu(this.options.contextMenu)
+
+    // init tooltip
+    this.tooltip = new Tooltip({ target: this.options.target })
   }
 
   // Set chart options
@@ -366,6 +370,19 @@ export class ScatterChart {
       })
       .style('cursor', 'pointer')
       .on('click',  this.pointClick.bind(this))
+      .on('mouseover', function(d, i, s){
+        const tpl =
+          '<ul>' +
+            '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
+            '<li>' + variables[yVariable].name + ': ' + variables[yVariable].accessor(d, i) + '</li>' +
+          '</ul>'
+
+        // display tooltip
+        self.tooltip.content(tpl).show(this)
+      })
+      .on('mouseout', (d, i, s) => {
+        self.tooltip.hide()
+      })
 
       if (useEdit) {
         this.dot
@@ -486,6 +503,9 @@ export class ScatterChart {
         _groupPanel.exit().remove()
       }
     }
+
+    // Tooltip
+    this.tooltip.init()
 
     // Events
     d3.select(target)
