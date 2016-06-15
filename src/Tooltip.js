@@ -15,7 +15,9 @@ export class Tooltip {
 
   setOptions(_){
     const defaults = {
-      target: 'body'
+      target: 'body',
+      dx: -20,
+      dy: -25
     }
 
     Object.assign(this.options, defaults, _)
@@ -32,10 +34,11 @@ export class Tooltip {
   }
 
   show(el){
+    const { dx, dy } = this.options
     this.el.html(this._content)
 
-    const xPosition = d3.mouse(el)[0] - 20
-    const yPosition = d3.mouse(el)[1] - 25
+    const xPosition = d3.mouse(el)[0] + dx
+    const yPosition = d3.mouse(el)[1] + dy
 
     this.el.style('top', yPosition + 'px')
     this.el.style('left', xPosition + 'px')
