@@ -751,6 +751,21 @@ export class ScatterChart {
       self.dragged[yVariable] = self.y.invert(Math.max(0, Math.min(self.options.h, p[1])))
       self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.update()
+
+
+      // update tooltip
+      if (self.options.useTooltip) {
+        const { variables } = self.options
+        const el = d3.event.target
+        const tpl =
+          '<ul>' +
+            '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(self.dragged, self.pointIndex) + '</li>' +
+            '<li>' + variables[yVariable].name + ': ' + variables[yVariable].accessor(self.dragged, self.pointIndex) + '</li>' +
+          '</ul>'
+
+        // display tooltip
+        self.tooltip.content(tpl).show(el)
+      }
     }
   }
 
@@ -762,6 +777,11 @@ export class ScatterChart {
     if (self.dragged) {
       self.dispatch[EVENTS.POINT.DRAG](self.dragged, self.pointIndex)
       self.dragged = null
+
+      // hide tooltip
+      if (self.options.useTooltip) {
+        self.tooltip.hide()
+      }
     }
   }
 
