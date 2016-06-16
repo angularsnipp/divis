@@ -578,6 +578,7 @@ export class LineChart {
     self.dragged = d
     self.pointIndex = i
     self.seriesIndex = s
+    self.draggedElement = d3.event.target
     self.update()
   }
 
@@ -630,7 +631,7 @@ export class LineChart {
       // update tooltip
       if (self.options.useTooltip) {
         const { variables, xVariable } = self.options
-        const el = d3.event.target
+        const el = self.draggedElement
         const tpl =
           '<ul>' +
             '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(self.dragged, self.pointIndex) + '</li>' +
