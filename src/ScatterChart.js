@@ -112,7 +112,11 @@ export class ScatterChart {
           }
         ]
       },
-      useTooltip: true
+      useTooltip: true,
+      tooltip: {
+        dx: -20,
+        dy: -40
+      }
     }
 
     // save initial options
