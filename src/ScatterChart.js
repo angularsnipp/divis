@@ -376,8 +376,13 @@ export class ScatterChart {
     if (useTooltip){
       this.dot
         .on('mouseover', function(d, i, s){
+          const groupName = variables[groupVariable].accessor(d, i)
+          const group = variables[groupVariable].values[groupName]
+          const gColor = group.color || colors[group.id]
+
           const tpl =
             '<ul>' +
+              '<li>' + variables[groupVariable].name + ': <div style="display: inline-block;width:8px;height:8px;background-color:' + gColor + ';"></div> ' + groupName + '</li>' +
               '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(d, i) + '</li>' +
               '<li>' + variables[yVariable].name + ': ' + variables[yVariable].accessor(d, i) + '</li>' +
             '</ul>'
@@ -756,10 +761,16 @@ export class ScatterChart {
 
       // update tooltip
       if (self.options.useTooltip) {
-        const { variables } = self.options
+        const { variables, groupVariable } = self.options
         const el = self.draggedElement
+
+        const groupName = variables[groupVariable].accessor(self.dragged, self.pointIndex)
+        const group = variables[groupVariable].values[groupName]
+        const gColor = group.color || colors[group.id]
+
         const tpl =
           '<ul>' +
+            '<li>' + variables[groupVariable].name + ': <div style="display: inline-block;width:8px;height:8px;background-color:' + gColor + ';"></div> ' + groupName + '</li>' +
             '<li>' + variables[xVariable].name + ': ' + variables[xVariable].accessor(self.dragged, self.pointIndex) + '</li>' +
             '<li>' + variables[yVariable].name + ': ' + variables[yVariable].accessor(self.dragged, self.pointIndex) + '</li>' +
           '</ul>'
