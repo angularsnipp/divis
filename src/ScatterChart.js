@@ -43,7 +43,7 @@ export class ScatterChart {
     this.contextMenu = new ContextMenu(this.options.contextMenu)
 
     // init tooltip
-    this.tooltip = new Tooltip({ target: this.options.target })
+    this.tooltip = new Tooltip(this.options.target, this.options.tooltip)
   }
 
   // Set chart options
@@ -52,6 +52,7 @@ export class ScatterChart {
      * Default config
      */
     const defaults = {
+      target: 'body',
       margin: {top: 23, right: 20, bottom: 40, left: 40},
       xVariable: 'x',
       yVariable: 'y',

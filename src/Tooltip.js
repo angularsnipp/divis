@@ -4,8 +4,9 @@ import d3 from 'd3'
  * Tooltip class
  */
 export class Tooltip {
-  constructor(options = {}){
+  constructor(target, options = {}){
     this.options = {}
+    this.target = target || 'body'
     this._content = ''
 
     this.setOptions(options)
@@ -15,7 +16,6 @@ export class Tooltip {
 
   setOptions(_){
     const defaults = {
-      target: 'body',
       dx: -20,
       dy: -25
     }
@@ -24,9 +24,7 @@ export class Tooltip {
   }
 
   init(){
-    const { target } = this.options
-
-    this.el = d3.select(target).append('div')
+    this.el = d3.select(this.target).append('div')
       .attr('class', 'divis-tooltip')
       .style('display', 'none')
 
