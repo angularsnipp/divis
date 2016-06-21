@@ -24,6 +24,11 @@ export class LineChart {
     // define chart id
     this.options.id = Math.random().toString(36).substr(2, 15)
 
+    // initialize legend index
+    let yVarsLength = this.options.yVariables.length
+    this.legendIndex = new Array(yVarsLength)
+    for (let i = 0; i < yVarsLength; i++) this.legendIndex[i] = true;
+
     // calculate width, height, w, h
     this.calculateSize()
 
@@ -42,11 +47,6 @@ export class LineChart {
     // initialize array-like object of selected point indices
     this.selectedIndices = {}
     this.selectedIndicesExtra = {}
-
-    // initialize legend index
-    let yVarsLength = this.options.yVariables.length
-    this.legendIndex = new Array(yVarsLength)
-    for (let i = 0; i < yVarsLength; i++) this.legendIndex[i] = true;
   }
 
   setOptions(_){
@@ -131,13 +131,13 @@ export class LineChart {
 
   calculateLimits(){
     let { options } = this
-    const { data } = this
+    const { data, legendIndex } = this
     const { variables, xVariable, yVariables } = options
 
     options.xMax = d3.max(data, variables[xVariable].accessor)
     options.xMin = d3.min(data, variables[xVariable].accessor)
-    options.yMax = d3.max(data, (d, i) => d3.max(yVariables, v => variables[v].accessor(d, i)))
-    options.yMin = d3.min(data, (d, i) => d3.min(yVariables, v => variables[v].accessor(d, i)))
+    options.yMax = d3.max(data, (d, i) => d3.max(yVariables, (v, s) => legendIndex[s] ? variables[v].accessor(d, i) : -Infinity ))
+    options.yMin = d3.min(data, (d, i) => d3.min(yVariables, (v, s) => legendIndex[s] ? variables[v].accessor(d, i) : Infinity ))
   }
 
   init(){
