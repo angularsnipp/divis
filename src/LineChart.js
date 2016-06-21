@@ -616,7 +616,7 @@ export class LineChart {
   legendClick(d, i){
     // update select Index
     this.legendIndex[i] = !this.legendIndex[i]
-    this.redraw()
+    this.reset()
   }
 
   mousemove() {
@@ -779,6 +779,8 @@ export class LineChart {
 
   reset(){
     const self = this
+
+    if (self.legendIndex.indexOf(true) == -1) return
 
     // recalculate limits
     self.calculateLimits()
